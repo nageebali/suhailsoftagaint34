@@ -201,13 +201,18 @@ app.post('/add/:sessionId/', async (req, res) => {
   try {
     // Create a new WhatsApp client
     const client = new Client({
-      authStrategy: new LocalAuth({ clientId: sessionId }),
-      puppeteer: { 
-        headless: false,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      }
-    });
-
+  authStrategy: new LocalAuth({
+    dataPath: '/tmp/wwebjs_auth', // المسار الوحيد القابل للكتابة في Lambda
+    puppeteer: {
+      args: [
+        '--disable-gpu',
+        '--single-process',
+        '--no-zygote',
+        '--no-sandbox'
+      ]
+    }
+  })
+});
     // Store QR code in database when generated
   // In your /add/:sessionId/ endpoint
 client.on('qr', async (qrCode) => {  // Changed parameter name from qr to qrCode
