@@ -3,366 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة جلسات واتساب</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>مدير WhatsApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #25D366;
-            --secondary-color: #128C7E;
-            --dark-color: #075E54;
-            --light-color: #DCF8C6;
-            --white-color: #ffffff;
-            --gray-color: #f5f5f5;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
         body {
-            background-color: var(--gray-color);
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
             padding: 20px;
+            background-color: #f8f9fa;
         }
-        
-        header {
-            background-color: var(--dark-color);
-            color: var(--white-color);
-            padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-        }
-        
-        .logo i {
-            font-size: 2rem;
-            margin-left: 10px;
-            color: var(--primary-color);
-        }
-        
-        .logo h1 {
-            font-size: 1.8rem;
-        }
-        
-        .auth-buttons .btn {
-            margin-right: 10px;
-            padding: 8px 20px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-login {
-            background-color: var(--primary-color);
-            color: var(--white-color);
-            border: 2px solid var(--primary-color);
-        }
-        
-        .btn-register {
-            background-color: transparent;
-            color: var(--white-color);
-            border: 2px solid var(--white-color);
-        }
-        
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-        
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://via.placeholder.com/1920x1080') no-repeat center center/cover;
-            height: 70vh;
-            display: flex;
-            align-items: center;
+        .qr-container {
             text-align: center;
-            color: var(--white-color);
+            margin: 20px 0;
         }
-        
-        .hero-content {
-            max-width: 800px;
+        #qrCanvas {
+            max-width: 300px;
             margin: 0 auto;
-            padding: 20px;
+            display: block;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background: white;
         }
-        
-        .hero h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
         }
-        
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
+        .connected {
+            background-color: #d4edda;
+            color: #155724;
         }
-        
-        .btn-hero {
+        .disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .log {
+            height: 200px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .loading {
             display: inline-block;
-            background-color: var(--primary-color);
-            color: var(--white-color);
-            padding: 12px 30px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 1.1rem;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,.3);
+            border-radius: 50%;
+            border-top-color: #25D366;
+            animation: spin 1s ease-in-out infinite;
         }
-        
-        .features {
-            padding: 80px 0;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 50px;
-            font-size: 2rem;
-            color: var(--dark-color);
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .feature-card {
-            background-color: var(--white-color);
-            border-radius: 8px;
-            padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            text-align: center;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-        }
-        
-        .feature-icon {
-            font-size: 3rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-        }
-        
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: var(--dark-color);
-        }
-        
-        footer {
-            background-color: var(--dark-color);
-            color: var(--white-color);
-            padding: 30px 0;
-            text-align: center;
-        }
-        
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-        
-        .footer-section {
-            flex: 1;
-            min-width: 250px;
-            margin-bottom: 20px;
-        }
-        
-        .footer-section h3 {
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-        }
-        
-        .footer-section ul {
-            list-style: none;
-        }
-        
-        .footer-section ul li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-section ul li a {
-            color: var(--white-color);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-section ul li a:hover {
-            color: var(--primary-color);
-        }
-        
-        .social-icons a {
-            color: var(--white-color);
-            font-size: 1.5rem;
-            margin: 0 10px;
-            transition: color 0.3s ease;
-        }
-        
-        .social-icons a:hover {
-            color: var(--primary-color);
-        }
-        
-        .copyright {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .auth-buttons {
-                margin-top: 20px;
-            }
-            
-            .hero h2 {
-                font-size: 2rem;
-            }
-            
-            .hero p {
-                font-size: 1rem;
-            }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fab fa-whatsapp"></i>
-                    <h1>نظام إدارة واتساب</h1>
+    <div class="container">
+        <h1 class="text-center mb-4">مدير جلسات WhatsApp</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>إدارة الجلسة</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="sessionId" class="form-label">معرف الجلسة:</label>
+                            <input type="text" class="form-control" id="sessionId" placeholder="أدخل معرفًا فريدًا للجلسة">
+                        </div>
+                        <button id="createSessionBtn" class="btn btn-primary">إنشاء جلسة</button>
+                        <button id="regenerateQrBtn" class="btn btn-secondary" disabled>تجديد QR</button>
+                    </div>
                 </div>
-                <div class="auth-buttons">
-                    <a href="login.html" class="btn btn-login">تسجيل الدخول</a>
-                    <a href="register.html" class="btn btn-register">إنشاء حساب</a>
+
+                <div class="qr-container mt-4">
+                    <canvas id="qrCanvas"></canvas>
+                    <div id="status" class="status">في انتظار إنشاء جلسة...</div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>إرسال رسالة</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">رقم الهاتف:</label>
+                            <input type="text" class="form-control" id="phoneNumber" placeholder="مثال: 201234567890">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">الرسالة:</label>
+                            <textarea class="form-control" id="message" rows="3"></textarea>
+                        </div>
+                        <button id="sendMessageBtn" class="btn btn-success" disabled>إرسال</button>
+                    </div>
+                </div>
+
+                <div class="log mt-4">
+                    <h6>سجل الأحداث:</h6>
+                    <div id="eventLog"></div>
                 </div>
             </div>
         </div>
-    </header>
-    
-    <section class="hero">
-        <div class="hero-content">
-            <h2>نظام متكامل لإدارة جلسات واتساب</h2>
-            <p>قم بإدارة جلسات واتساب متعددة بسهولة وأمان، مع ميزات متقدمة لإرسال الرسائل وتتبعها</p>
-            <a href="login.html" class="btn-hero">ابدأ الآن</a>
-        </div>
-    </section>
-    
-    <section class="features">
-        <div class="container">
-            <h2 class="section-title">مميزات النظام</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <h3>إدارة متعددة</h3>
-                    <p>إدارة عدة جلسات واتساب من لوحة تحكم واحدة بكل سهولة</p>
-                </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const socket = io();
+            let currentSessionId = null;
+            let isAuthenticated = false;
+
+            // عناصر واجهة المستخدم
+            const sessionIdInput = document.getElementById('sessionId');
+            const createSessionBtn = document.getElementById('createSessionBtn');
+            const regenerateQrBtn = document.getElementById('regenerateQrBtn');
+            const sendMessageBtn = document.getElementById('sendMessageBtn');
+            const phoneNumberInput = document.getElementById('phoneNumber');
+            const messageInput = document.getElementById('message');
+            const qrCanvas = document.getElementById('qrCanvas');
+            const statusDiv = document.getElementById('status');
+            const eventLogDiv = document.getElementById('eventLog');
+
+            // إضافة رسالة إلى سجل الأحداث
+            function logEvent(message, isError = false) {
+                const logEntry = document.createElement('div');
+                logEntry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
+                if (isError) {
+                    logEntry.style.color = 'red';
+                }
+                eventLogDiv.prepend(logEntry);
+            }
+
+            // عرض QR Code على Canvas
+            function displayQR(qrData) {
+                return new Promise((resolve, reject) => {
+                    QRCode.toCanvas(qrCanvas, qrData, {
+                        width: 300,
+                        margin: 2,
+                        color: {
+                            dark: '#075e54', // لون WhatsApp
+                            light: '#ffffff'
+                        }
+                    }, (error) => {
+                        if (error) {
+                            console.error('QR display error:', error);
+                            reject(error);
+                        } else {
+                            console.log('QR displayed successfully');
+                            resolve();
+                        }
+                    });
+                });
+            }
+
+            // إنشاء جلسة جديدة
+            createSessionBtn.addEventListener('click', async function() {
+                const sessionId = sessionIdInput.value.trim();
+
+                if (!sessionId) {
+                  //  sessionIdInput.value="currentSessionId";
+                    alert('الرجاء إدخال معرف الجلسة');
+                    return;
+                }
+
+                currentSessionId = sessionId;
+                statusDiv.innerHTML = '<span class="loading"></span> جارٍ إنشاء الجلسة...';
+                socket.emit('create_session', sessionId);
+                logEvent(`طلب إنشاء جلسة جديدة: ${sessionId}`);
+                sendMessageBtn.enabled=true
+            });
+
+            // تجديد QR Code
+            regenerateQrBtn.addEventListener('click', function() {
+                if (!currentSessionId) return;
+                statusDiv.innerHTML = '<span class="loading"></span> جارٍ تجديد QR code...';
+                socket.emit('regenerate_qr', currentSessionId);
+                logEvent(`طلب تجديد QR code للجلسة: ${currentSessionId}`);
+            });
+
+
+
+
+
+
+
+
+          // استمع لمعرف الجلسة عند الاتصال
+socket.on('currentsessionId', (sessionId) => {
+    //alert(sessionId);
+    try {
+        if (!sessionId) {
+            throw new Error('لم يتم استلام معرف جلسة صالح من الخادم');
+        }
+        
+        // تعبئة حقل معرف الجلسة تلقائيًا
+        sessionIdInput.value = sessionId;
+        currentSessionId = sessionId;
+        
+        // إظهار رسالة في سجل الأحداث
+        logEvent(`تم تعيين معرف الجلسة تلقائيًا: ${sessionId}`);
+        
+        // إعلام المستخدم (اختياري)
+        statusDiv.textContent = `جلسة جاهزة: ${sessionId}`;
+        
+    } catch (err) {
+        console.error('خطأ في معالجة معرف الجلسة:', err);
+        logEvent(`خطأ: ${err.message}`, true);
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // إرسال رسالة
+            sendMessageBtn.addEventListener('click', function() {
+                const phoneNumber = phoneNumberInput.value.trim();
+                const message = messageInput.value.trim();
+
+                if (!phoneNumber || !message) {
+                    alert('الرجاء إدخال رقم الهاتف والرسالة');
+                    return;
+                }
                 
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-qrcode"></i>
-                    </div>
-                    <h3>ربط سريع</h3>
-                    <p>ربط جلسات واتساب عبر رمز QR بخطوات بسيطة وسريعة</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-paper-plane"></i>
-                    </div>
-                    <h3>إرسال رسائل</h3>
-                    <p>إرسال رسائل نصية بسهولة مع إمكانية تتبع حالة الإرسال</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-history"></i>
-                    </div>
-                    <h3>سجل الرسائل</h3>
-                    <p>حفظ جميع الرسائل المرسلة والمستلمة مع تفاصيل كل رسالة</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>آمن وحماية</h3>
-                    <p>نظام آمن مع مصادقة المستخدمين وحماية البيانات</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>تقارير وإحصائيات</h3>
-                    <p>تقارير مفصلة عن نشاط الجلسات والرسائل</p>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>عن النظام</h3>
-                    <p>نظام متكامل لإدارة جلسات واتساب الويب بسهولة وأمان مع ميزات متقدمة للتحكم الكامل</p>
-                </div>
-                
-                <div class="footer-section">
-                    <h3>روابط سريعة</h3>
-                    <ul>
-                        <li><a href="login.html">تسجيل الدخول</a></li>
-                        <li><a href="register.html">إنشاء حساب</a></li>
-                        <li><a href="#">المميزات</a></li>
-                        <li><a href="#">الأسئلة الشائعة</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h3>اتصل بنا</h3>
-                    <ul>
-                        <li><i class="fas fa-envelope"></i> info@whatsapp-manager.com</li>
-                        <li><i class="fas fa-phone"></i> '+967777268083'</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-            </div>
-            
-            <div class="copyright">
-                <p>&copy; 2023 نظام إدارة واتساب. جميع الحقوق محفوظة.</p>
-            </div>
-        </div>
-    </footer>
+
+       
+
+                socket.emit('send_message', {
+                    sessionId: currentSessionId,
+                    phoneNumber: phoneNumber,
+                    message: message
+                }, (response) => {
+                    if (response.success) {
+                        logEvent(`تم إرسال الرسالة إلى ${phoneNumber}`);
+                        messageInput.value=""
+                    } else {
+                        logEvent(`فشل إرسال الرسالة: ${response.error}`, true);
+                    }
+                });
+            });
+
+            // استمع لأحداث السوكيت
+
+            // عند استقبال QR code
+            socket.on('qr', async (data) => {
+                try {
+                    await displayQR(data.qr);
+                    statusDiv.innerHTML = `
+                        <span class="loading"></span>
+                        يرجى مسح QR code باستخدام تطبيق WhatsApp
+                        <br><small>الجلسة: ${data.sessionId}</small>
+                    `;
+                     regenerateQrBtn.disabled = false;
+                    logEvent(`تم استقبال QR code للجلسة ${data.sessionId}`);
+                } catch (err) {
+                    console.error('Failed to display QR:', err);
+                    statusDiv.textContent = 'فشل عرض QR code';
+                    logEvent(`فشل عرض QR code: ${err.message}`, true);
+                }
+            });
+
+            // عند المصادقة الناجحة
+            socket.on('authenticated', (data) => {
+                isAuthenticated = true;
+                qrCanvas.style.display = 'none';
+                statusDiv.textContent = 'تم الاتصال بـ WhatsApp بنجاح!';
+                statusDiv.className = 'status connected';
+                sendMessageBtn.disabled = false;
+                regenerateQrBtn.disabled = true;
+                if (data.clientInfo) {
+    const userInfoDiv = document.createElement('div');
+    userInfoDiv.innerHTML = `
+      <p>اسم المستخدم: ${data.clientInfo.pushname || 'غير معروف'}</p>
+      <p>رقم الهاتف: ${data.clientInfo.wid.user || 'غير معروف'}</p>
+    `;
+    statusDiv.appendChild(userInfoDiv);
+  }
+                logEvent(`تم المصادقة بنجاح للجلسة ${data.sessionId}`);
+            });
+            // تحديثات الحالة
+           
+           
+            socket.on('status', (message) => {
+                statusDiv.textContent = message;
+                logEvent(`تحديث حالة: ${message}`);
+            });
+
+            // عند حدوث خطأ
+            socket.on('error', (error) => {
+                statusDiv.textContent = `خطأ: ${error.message || error}`;
+                statusDiv.className = 'status disconnected';
+                logEvent(`خطأ: ${error.message || error}`, true);
+            });
+
+            // عند قطع الاتصال
+            socket.on('disconnect', () => {
+                statusDiv.textContent = 'تم قطع الاتصال بالخادم';
+                statusDiv.className = 'status disconnected';
+                logEvent('تم قطع الاتصال بالخادم', true);
+            });
+        });
+    </script>
 </body>
 </html>
