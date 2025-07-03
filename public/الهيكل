@@ -1,0 +1,17 @@
+مشروعك/
+├── index.html
+├── systems.html
+├── about.html
+├── contact.html
+├── images/
+│   ├── hero-illustration.png
+│   ├── factory-system.jpg
+│   ├── restaurant-system.jpg
+│   ├── school-system.jpg
+│   ├── hospital-system.jpg
+│   └── logo.png
+├── css/
+│   ├── style.css
+│   └── responsive.css
+└── js/
+    └── main.js

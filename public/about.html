@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام محاسبي متكامل - سهيل سوفت</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            border-radius: 0 0 15px 15px;
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: #1a73e8;
+            margin-left: 15px;
+        }
+        
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #1a73e8;
+        }
+        
+        .logo-text span {
+            color: #34a853;
+        }
+        
+        .contact-info {
+            text-align: left;
+        }
+        
+        .contact-info a {
+            display: inline-block;
+            background: #1a73e8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(26, 115, 232, 0.3);
+        }
+        
+        .contact-info a:hover {
+            background: #0d5bb8;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(26, 115, 232, 0.4);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), url('https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 60px 40px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero h1 {
+            font-size: 2.8rem;
+            color: #1a2a6c;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        
+        .hero p {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            max-width: 900px;
+            margin: 0 auto 30px;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .benefits {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .benefit-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            width: 220px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .benefit-card i {
+            font-size: 2.5rem;
+            color: #1a73e8;
+            margin-bottom: 15px;
+        }
+        
+        .benefit-card h3 {
+            color: #1a2a6c;
+            margin-bottom: 10px;
+        }
+        
+        /* Features Section */
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            color: white;
+            margin: 40px 0 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #1a73e8, #34a853);
+            border-radius: 2px;
+        }
+        
+        .features-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .feature-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, #1a73e8, #34a853);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #1a73e8;
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.4rem;
+            color: #1a2a6c;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card p {
+            color: #555;
+            line-height: 1.8;
+        }
+        
+        /* Industries Section */
+        .industries {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .industries h2 {
+            text-align: center;
+            font-size: 2rem;
+            color: #1a2a6c;
+            margin-bottom: 30px;
+        }
+        
+        .industries-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .industry-tag {
+            background: linear-gradient(135deg, #1a73e8, #34a853);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Cloud Section */
+        .cloud-section {
+            background: linear-gradient(135deg, #1a73e8, #2c3e50);
+            color: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 50px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+        
+        .cloud-content {
+            flex: 1;
+        }
+        
+        .cloud-content h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .cloud-content ul {
+            padding-right: 20px;
+        }
+        
+        .cloud-content li {
+            margin-bottom: 15px;
+            position: relative;
+            padding-right: 25px;
+        }
+        
+        .cloud-content li::before {
+            content: "✓";
+            position: absolute;
+            right: 0;
+            top: 0;
+            color: #34a853;
+            font-weight: bold;
+        }
+        
+        .cloud-icon {
+            font-size: 6rem;
+            color: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Offer Section */
+        .offer-section {
+            padding: 20px 0;
+        }
+        
+        .offer-banner {
+            background: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 100%);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            animation: pulse 2s infinite;
+            margin: 30px 0;
+        }
+        
+        .offer-banner p {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #d32f2f;
+            margin-bottom: 20px;
+        }
+        
+        .offer-btn {
+            display: inline-block;
+            background: #d32f2f;
+            color: white;
+            padding: 12px 35px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(211,47,47,0.4);
+        }
+        
+        .offer-btn:hover {
+            background: #b71c1c;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(211,47,47,0.6);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Location Section */
+        .location-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .location-section h2 {
+            color: #1a2a6c;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .location-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .location-card {
+            background: linear-gradient(135deg, #1a73e8, #34a853);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 280px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .location-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        
+        .location-card h3 {
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 40px 0 20px;
+            text-align: center;
+            border-radius: 15px 15px 0 0;
+            margin-top: 30px;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .slogan {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #4caf50;
+        }
+        
+        .footer-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #1a73e8;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #1a73e8;
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .social-links a:hover {
+            transform: translateY(-5px) scale(1.1);
+            background: #0d5bb8;
+        }
+        
+        .copyright {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .cloud-section {
+                flex-direction: column;
+            }
+            
+            .cloud-icon {
+                order: -1;
+            }
+            
+            .features-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .offer-banner p {
+                font-size: 1.4rem;
+            }
+            
+            .location-info {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <div class="logo-text">سهيل <span>سوفت</span></div>
+                </div>
+                <div class="contact-info">
+                    <a href="https://wa.me/967779749491" target="_blank">
+                        <i class="fab fa-whatsapp"></i> اتصل بنا عبر واتساب
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="hero">
+            <h1>نظام <span class="highlight">سهيل سوفت</span> المحاسبي المتكامل لجميع أنواع الأعمال</h1>
+            <p>مرونة مطلقة لكل الأعمال من الكبره التوسطه والصغيره، نظام متكامل لإدارة جميع جوانب عملك باحترافية</p>
+            
+            <div class="benefits">
+                <div class="benefit-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>ستراقب أعمالك</h3>
+                    <p>تحكم كامل في كل جوانب عملك</p>
+                </div>
+                <div class="benefit-card">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>ستختفي الأخطاء</h3>
+                    <p>دقة محاسبية عالية بدون أخطاء</p>
+                </div>
+                <div class="benefit-card">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>ستزيد مبيعاتك</h3>
+                    <p>أدوات متطورة لزيادة المبيعات</p>
+                </div>
+                <div class="benefit-card">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h3>أرباح عالية</h3>
+                    <p>تحقيق أعلى نسبة أرباح ممكنة</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- العرض الأول بعد الهيرو مباشرة -->
+        <section class="offer-section">
+            <div class="offer-banner">
+                <p>خصم 30% للعملاء الجدد خلال شهر يوليو!</p>
+                <a href="https://wa.me/967779749491" class="offer-btn">احصل على العرض الآن</a>
+            </div>
+        </section>
+        
+        <h2 class="section-title">مميزات النظام المحاسبي سهيل سوفت</h2>
+        <div class="features-container">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h3>معالجة محاسبية متكاملة</h3>
+                <p>إدارة كافة العمليات المالية بدقة مع دعم كامل للمعايير المحاسبية الدولية.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <h3>الفواتير الإلكترونية</h3>
+                <p>إصدار فواتير إلكترونية متوافقة مع أنظمة الزكاة والضريبة ومدعومة بتقنية QR Code.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <h3>المصروفات والإيرادات</h3>
+                <p>تتبع دقيق للمصروفات والإيرادات مع إمكانية التصنيف والتحليل.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <h3>الميزانيات والتقارير</h3>
+                <p>إعداد ميزانيات دورية وتقارير مالية مفصلة بمعايير محاسبية دقيقة.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-hand-holding-usd"></i>
+                </div>
+                <h3>إدارة الذمم</h3>
+                <p>متابعة الذمم الدائنة والمدينة مع تنبيهات آلية للدفعات المستحقة.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h3>لوحات تحليلية</h3>
+                <p>لوحات معلومات تفاعلية لتحليل الأداء المالي بمؤشرات بصرية واضحة.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>أمان متقدم</h3>
+                <p>نظام أمان متكامل مع صلاحيات مستخدمين متعددة المستويات وتعدد المستخدمين.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <h3>تكامل مع الأنظمة</h3>
+                <p>تكامل سلس مع أنظمة الشركة الأخرى مثل المبيعات والمخازن والموارد البشرية.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-cloud"></i>
+                </div>
+                <h3>حلول سحابية</h3>
+                <p>عمل عن بعد عبر السحابة الإلكترونية مع نسخ احتياطية تلقائية.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <h3>تعدد العملات والفروع</h3>
+                <p>إدارة فروع متعددة وعملات مختلفة مع تحويلات وسياسات سعر صرف مرنة.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <h3>إدارة المخزون المتقدمة</h3>
+                <p>تحديد تكلفة المخزون مع مراعاة التضخم وتقلبات سعر الصرف، ودعم الباركود والميزان الإلكتروني.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <h3>شؤون الموظفين</h3>
+                <p>نظام متكامل لإدارة الموارد البشرية من رواتب وإجازات وتقييمات.</p>
+            </div>
+        </div>
+        
+        <div class="industries">
+            <h2>سهيل سوفت متخصص في إدارة هذه الأعمال</h2>
+            <div class="industries-container">
+                <div class="industry-tag">معامل الخياطة والورشات</div>
+                <div class="industry-tag">صناعة الأثاث والديكور</div>
+                <div class="industry-tag">استيراد وتصدير</div>
+                <div class="industry-tag">وكالات وأسواق</div>
+                <div class="industry-tag">مولات وسوبرماركت</div>
+                <div class="industry-tag">إدارة فنادق</div>
+                <div class="industry-tag">مؤسسات المياه والكهرباء</div>
+                <div class="industry-tag">مقاولات</div>
+                <div class="industry-tag">جمعيات</div>
+                <div class="industry-tag">محطات الغاز المركزية</div>
+                <div class="industry-tag">محطات البترول</div>
+                <div class="industry-tag">خطوط الإنتاج</div>
+                <div class="industry-tag">إدارة شؤون الموظفين</div>
+                <div class="industry-tag">صيدليات</div>
+                <div class="industry-tag">مواد غذائية</div>
+                <div class="industry-tag">إلكترونيات واكسسوارات</div>
+                <div class="industry-tag">مبيدات (حلول زراعية)</div>
+                <div class="industry-tag">قطع غيار</div>
+                <div class="industry-tag">معارض الملابس</div>
+                <div class="industry-tag">محطات توليد الطاقة</div>
+                <div class="industry-tag">مستشفيات وعيادات</div>
+                <div class="industry-tag">أسواق الخضروات والفواكة</div>
+            </div>
+        </div>
+        
+        <div class="cloud-section">
+            <div class="cloud-content">
+                <h2>التقنيات السحابية (الكلاود)</h2>
+                <p>يوفر نظام سهيل سوفت حلول سحابية متطورة تعود عليكم بالفوائد التالية:</p>
+                <ul>
+                    <li>إمكانية ربط فروع الشركة بقاعدة واحدة عبر الإنترنت</li>
+                    <li>العمل على النظام من أي مكان في العالم</li>
+                    <li>نسخ احتياطية تلقائية يومية</li>
+                    <li>تحديثات تلقائية بدون توقف العمل</li>
+                    <li>أمان عالي المستوى لحماية بياناتك</li>
+                    <li>لا حاجة لصيانة الخوادم أو الأجهزة لان النظام يدعم جميع الاجهزه</li>
+                </ul>
+            </div>
+            <div class="cloud-icon">
+                <i class="fas fa-cloud"></i>
+            </div>
+        </div>
+        
+        <!-- قسم موقعنا -->
+        <div class="location-section">
+            <h2>موقعنا</h2>
+            <div class="location-info">
+                <div class="location-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>العنوان</h3>
+                    <p>الجمهورية اليمنية، ذمار، الدايري</p>
+                </div>
+                
+                <div class="location-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>أوقات العمل</h3>
+                    <p>من السبت إلى الخميس</p>
+                    <p>8:00 صباحاً - 4:00 مساءً</p>
+                </div>
+                
+                <div class="location-card">
+                    <i class="fas fa-headset"></i>
+                    <h3>الدعم الفني</h3>
+                    <p>متاح خلال أوقات العمل</p>
+                    <p>واتساب: 967779749491+</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- العرض الثاني قبل الفوتر -->
+        <section class="offer-section">
+            <div class="offer-banner">
+                <p>انتهز الفرصة! خصم 30% ينتهي في نهاية يوليو</p>
+                <a href="https://wa.me/967779749491" class="offer-btn">اطلب النظام الآن</a>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="slogan">سهيل سوفت طريقك للنجاح</div>
+                <p>باستخدامك لنظام سهيل سوفت النسخة المطورة (سهيل SQL) ستحقق كل أهدافك</p>
+                
+                <div class="footer-title">سهيل سوفت - الحلول البرمجية المتكاملة</div>
+                
+                <div class="social-links">
+                    <a href="https://www.facebook.com/suhailsoft2017" target="_blank" title="فيسبوك">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.youtube.com/@suhailsoft5845" target="_blank" title="يوتيوب">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                    <a href="https://wa.me/967779749491" target="_blank" title="واتساب">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+                
+                <div class="copyright">
+                    © 2023 جميع الحقوق محفوظة لشركة سهيل سوفت
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

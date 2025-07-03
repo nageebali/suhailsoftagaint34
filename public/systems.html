@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أنظمتنا - نظام محاسبي سهيل سوفت</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a4f72;
+            --secondary: #2c8c99;
+            --accent: #e74c3c;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tahoma', 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: var(--primary);
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: var(--transition);
+            border: 2px solid var(--primary);
+            margin-top: 15px;
+        }
+        
+        .btn:hover {
+            background: transparent;
+            color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Header Styles */
+        header {
+            background: white;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .logo span {
+            color: var(--secondary);
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: #f1f1f1;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            margin-right: 8px;
+            color: var(--primary);
+            transition: var(--transition);
+        }
+        
+        .social-icons a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        nav {
+            background: var(--primary);
+            padding: 0;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+        }
+        
+        nav ul li {
+            position: relative;
+        }
+        
+        nav ul li a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            transition: var(--transition);
+            font-size: 1.1rem;
+        }
+        
+        nav ul li a:hover, 
+        nav ul li a.active {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        /* Intro Section */
+        .accounting-intro {
+            background: linear-gradient(135deg, var(--primary), #2c3e50);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .accounting-intro h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .accounting-intro p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+        
+        /* Core Features */
+        .core-features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin: 50px 0;
+        }
+        
+        .core-feature {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 30px;
+            width: 280px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .core-feature:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .core-feature i {
+            font-size: 3rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        
+        .core-feature h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        /* System Details */
+        .system-details {
+            margin-top: 50px;
+        }
+        
+        .system-article {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 50px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+        
+        .system-article:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .system-article h2 {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .system-content {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .system-image {
+            flex: 1;
+            min-width: 300px;
+            height: 350px;
+            overflow: hidden;
+        }
+        
+        .system-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        
+        .system-article:hover .system-image img {
+            transform: scale(1.05);
+        }
+        
+        .system-description {
+            flex: 1;
+            min-width: 300px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .system-description p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: var(--gray);
+        }
+        
+        .features-list {
+            margin: 20px 0;
+            list-style-type: none;
+        }
+        
+        .features-list li {
+            padding: 10px 0;
+            border-bottom: 1px dashed #eee;
+            position: relative;
+            padding-right: 30px;
+        }
+        
+        .features-list li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--secondary);
+            position: absolute;
+            right: 0;
+        }
+        
+        .system-excerpt {
+            background: #f8f9fa;
+            padding: 15px;
+            border-right: 4px solid var(--secondary);
+            margin-bottom: 20px;
+            font-style: italic;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        /* Customization Section */
+        .customization-section {
+            background: linear-gradient(135deg, #2c8c99, #1a4f72);
+            color: white;
+            padding: 80px 0;
+            margin: 80px 0;
+            text-align: center;
+        }
+        
+        .customization-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .customization-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .customization-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: white;
+            border-radius: 2px;
+        }
+        
+        .customization-section p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        
+        .customization-features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .customization-feature {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 25px;
+            width: 250px;
+            text-align: center;
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+        }
+        
+        .customization-feature:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .customization-feature i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #ffd43b;
+        }
+        
+        .customization-feature h3 {
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        /* Contact Info */
+        .contact-info {
+            background: var(--light);
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 50px;
+            text-align: center;
+        }
+        
+        .contact-info h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .contact-methods {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .contact-method {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: var(--transition);
+        }
+        
+        .contact-method:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .contact-method i {
+            margin-left: 10px;
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+        
+        .whatsapp-btn-large {
+            display: inline-flex;
+            align-items: center;
+            background: #25D366;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .whatsapp-btn-large:hover {
+            background: #128C7E;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        .whatsapp-btn-large i {
+            margin-left: 10px;
+            font-size: 1.5rem;
+        }
+        
+        .whatsapp-badge {
+            background: #25D366;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+        }
+        
+        .footer-content p {
+            margin: 10px 0;
+            color: #ddd;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .system-article h2 {
+                font-size: 1.5rem;
+            }
+            
+            .system-description {
+                padding: 20px;
+            }
+            
+            .contact-methods {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .customization-feature {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .system-image {
+                height: 250px;
+            }
+            
+            .accounting-intro h1 {
+                font-size: 2rem;
+            }
+            
+            .accounting-intro p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <h1>نظام محاسبي <span>سهيل سوفت</span></h1>
+                </div>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            
+            <nav>
+                <ul>
+                    <li><a href="index.html">الصفحة الرئيسية</a></li>
+                    <li><a href="systems.html" class="active">أنظمتنا</a></li>
+                    <li><a href="about.html">عن الشركة</a></li>
+                    <li><a href="clients.html">عملاؤنا</a></li>
+                    <li><a href="contact.html">اتصل بنا</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Accounting System Intro -->
+    <div class="accounting-intro">
+        <div class="container">
+            <h1>نظام محاسبي متكامل للشركات والمؤسسات</h1>
+            <p>
+                نظام محاسبي شامل يوفر حلولاً متكاملة لإدارة كافة العمليات المالية والمحاسبية، مع وحدات متخصصة للقطاعات المختلفة. تم تصميم النظام ليلبي احتياجات الشركات الصغيرة والمتوسطة والكبيرة مع ضمان الدقة والمرونة والسرعة في المعالجة.
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Core Accounting Features -->
+        <section>
+            <h2 class="section-title">مميزات النظام المحاسبي الأساسي</h2>
+            <div class="core-features">
+                <div class="core-feature">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <h3>الفواتير والمستندات</h3>
+                    <p>إدارة كافة الفواتير والمستندات المالية باحترافية مع إمكانية التخصيص</p>
+                </div>
+                
+                <div class="core-feature">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>التقارير المالية</h3>
+                    <p>تقارير مالية دقيقة وشاملة تساعد في اتخاذ القرارات الإدارية</p>
+                </div>
+                
+                <div class="core-feature">
+                    <i class="fas fa-warehouse"></i>
+                    <h3>إدارة المخازن</h3>
+                    <p>تتبع المخزون وتقييمه بدقة مع تكامل كامل مع النظام المحاسبي</p>
+                </div>
+                
+                <div class="core-feature">
+                    <i class="fas fa-exchange-alt"></i>
+                    <h3>المشتريات والمبيعات</h3>
+                    <p>إدارة كافة عمليات الشراء والبيع وتتبع حركة البضائع</p>
+                </div>
+                
+                <div class="core-feature">
+                    <i class="fas fa-users"></i>
+                    <h3>إدارة العملاء</h3>
+                    <p>تسجيل بيانات العملاء ومتابعة حساباتهم وحركة التعاملات</p>
+                </div>
+                
+                <div class="core-feature">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <h3>إدارة النقدية</h3>
+                    <p>تتبع حركة النقدية اليومية والتحويلات البنكية بسهولة</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Specialized Systems -->
+        <section class="system-details">
+            <h2 class="section-title">الوحدات المتخصصة للنظام المحاسبي</h2>
+            
+            <!-- Supermarket Management -->
+            <article id="markets" class="system-article">
+                <h2><i class="fas fa-shopping-cart" style="margin-left: 10px;"></i> وحدة إدارة السوبرماركت</h2>
+                <div class="system-content">
+                    <div class="system-image">
+                        <img src="./img/113.jpg" alt="نظام الأسواق">
+                    </div>
+                    <div class="system-description">
+                        <div class="system-excerpt">
+                            "وحدة متكاملة ضمن نظامنا المحاسبي لإدارة متاجر التجزئة والسوبرماركت، توفر تحكمًا كاملاً في الجوانب المالية والمخزونية مع تقارير دقيقة تدعم اتخاذ القرارات."
+                        </div>
+                        
+                        <h3>المميزات المحاسبية:</h3>
+                        <ul class="features-list">
+                            <li>يدعم الباركواد والفواتير الاكترونيه</li>
+                            <li>إدارة فروع متعددة مع تكامل محاسبي مركزي</li>
+                            <li>نقاط بيع مرتبطة مباشرة بالحسابات المالية</li>
+                            <li>مراقبة المخزون وتقييمه محاسبياً</li>
+                            <li>تقارير مالية يومية عن المبيعات والمشتريات</li>
+                            <li>تعدد العملات مع معالجة فروق الأسعار</li>
+                        </ul>
+                        
+                        <a href="contact.html" class="btn">اطلب الوحدة</a>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Fruits and Vegetables Agency -->
+            <article id="agency" class="system-article">
+                <h2><i class="fas fa-handshake" style="margin-left: 10px;"></i> وحدة الوكالات الفواكة والخضروات</h2>
+                <div class="system-content">
+                    <div class="system-image">
+                        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" alt="نظام الوكالات">
+                    </div>
+                    <div class="system-description">
+                        <div class="system-excerpt">
+                            "وحدة متخصصة ضمن النظام المحاسبي لإدارة حسابات الوكالات والعمولات، مصممة لتلبية احتياجات الشركات التجارية والوكالات بميزات محاسبية متقدمة."
+                        </div>
+                        
+                        <h3>المميزات المحاسبية:</h3>
+                        <ul class="features-list">
+                            <li>إدارة حسابات متعددة للوكالات ضمن النظام المحاسبي</li>
+                            <li>حساب العمولات تلقائياً وفق شروط محددة</li>
+                            <li>تكامل مع حسابات العملاء والموردين</li>
+                            <li>تقارير مالية مفصلة عن العمولات والعمليات</li>
+                            <li>ربط معاملات الدلالات بالميزانية العمومية</li>
+                        </ul>
+                        
+                        <a href="contact.html" class="btn">اطلب الوحدة</a>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Fuel Stations -->
+            <article id="fuel" class="system-article">
+                <h2><i class="fas fa-gas-pump" style="margin-left: 10px;"></i> وحدة محطات الوقود والغاز</h2>
+                <div class="system-content">
+                    <div class="system-image">
+                        <img src="./img/8.jpg" alt="نظام محطات الوقود">
+                    </div>
+                    <div class="system-description">
+                        <div class="system-excerpt">
+                            "وحدة متخصصة ضمن النظام المحاسبي لإدارة محطات الوقود والغاز، تتيح تحكماً محاسبياً كاملاً في عمليات البيع والمشتريات والمخزون."
+                        </div>
+                        
+                        <h3>المميزات المحاسبية:</h3>
+                        <ul class="features-list">
+                            <li>إدارة مضخات الوقود مع تكامل محاسبي</li>
+                            <li>ربط أجهزة المحطات بالنظام المحاسبي</li>
+                            <li>تقارير مالية عن المبيعات اليومية والفترية</li>
+                            <li>إدارة المخازن والتسعير محاسبياً</li>
+                            <li>تتبع التكاليف والأرباح بدقة</li>
+                        </ul>
+                        
+                        <a href="contact.html" class="btn">اطلب الوحدة</a>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Trailers Management -->
+            <article id="trailers" class="system-article">
+                <h2><i class="fas fa-truck-moving" style="margin-left: 10px;"></i> وحدة إدارة حركة المقطورات</h2>
+                <div class="system-content">
+                    <div class="system-image">
+                        <img src="./img/999.png" alt="نظام حركة المقطورات">
+                    </div>
+                    <div class="system-description">
+                        <div class="system-excerpt">
+                            "وحدة متخصصة لإدارة حركة المقطورات والشاحنات، تقدم حلاً متكاملاً لتتبع الرحلات وتكاليف التشغيل والإيرادات مع تكامل كامل مع النظام المحاسبي."
+                        </div>
+                        
+                        <h3>المميزات المحاسبية:</h3>
+                        <ul class="features-list">
+                            <li>تتبع تكاليف الوقود والصيانة لكل مقطورة</li>
+                            <li>إدارة إيرادات الرحلات والشحنات</li>
+                            <li>حساب مصاريف السائقين والعمولات</li>
+                            <li>ربط مصاريف الطرق والجمارك بالنظام المحاسبي</li>
+                            <li>تقارير ربحية كل مقطورة ورحلة</li>
+                            <li>إدارة عقود التشغيل والاستئجار</li>
+                            <li>تكامل مع نظام الميزان الإلكتروني</li>
+                        </ul>
+                        
+                        <a href="contact.html" class="btn">اطلب الوحدة</a>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Electronic Scale -->
+            <article id="scale" class="system-article">
+                <h2><i class="fas fa-weight-hanging" style="margin-left: 10px;"></i> وحدة الميزان الإلكتروني</h2>
+                <div class="system-content">
+                    <div class="system-image">
+                        <img src="./img/888.png" alt="نظام الميزان الإلكتروني">
+                    </div>
+                    <div class="system-description">
+                        <div class="system-excerpt">
+                            "وحدة متكاملة لربط الميزان الإلكتروني بالنظام المحاسبي، تتيح تسجيل الأوزان تلقائياً وإنشاء الفواتير وإدارة المخزون بدقة متناهية."
+                        </div>
+                        
+                        <h3>المميزات المحاسبية:</h3>
+                        <ul class="features-list">
+                            <li>ربط مباشر بين الميزان والنظام المحاسبي</li>
+                            <li>إنشاء فواتير تلقائية بناءً على الأوزان</li>
+                            <li>تسجيل حركة المخزون بدقة</li>
+                            <li>حساب تكاليف الشحن حسب الوزن</li>
+                            <li>تقارير عن كميات المواد الداخلة والخارجة</li>
+                            <li>تكامل مع نظام إدارة المقطورات</li>
+                            <li>إمكانية ربط عدة موازين في مواقع مختلفة</li>
+                        </ul>
+                        
+                        <a href="contact.html" class="btn">اطلب الوحدة</a>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Hotels Management -->
+            <article id="hotels" class="system-article">
+                <h2><i class="fas fa-hotel" style="margin-left: 10px;"></i> وحدة إدارة الفنادق والشقق</h2>
+                <div class="system-content">
+                    <div class="system-image">
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="نظام الفنادق">
+                    </div>
+                    <div class="system-description">
+                        <div class="system-excerpt">
+                            "وحدة متكاملة ضمن النظام المحاسبي لإدارة الفنادق والشقق المفروشة، تمكنك من إدارة الحجوزات والغرف والخدمات مع تكامل محاسبي كامل."
+                        </div>
+                        
+                        <h3>المميزات المحاسبية:</h3>
+                        <ul class="features-list">
+                            <li>إدارة الحجوزات مع تكامل محاسبي</li>
+                            <li>ربط حسابات الغرف والخدمات بالنظام المحاسبي</li>
+                            <li>تقارير الإشغال والإيرادات اليومية</li>
+                            <li>إدارة حسابات العملاء والموردين</li>
+                            <li>تكامل محاسبي مع خدمات المطاعم والمرافق</li>
+                        </ul>
+                        
+                        <a href="contact.html" class="btn">اطلب الوحدة</a>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Restaurants Management -->
+            <article id="restaurants" class="system-article">
+                <h2><i class="fas fa-utensils" style="margin-left: 10px;"></i> وحدة إدارة المطاعم</h2>
+                <div class="system-content">
+                    <div class="system-image">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="نظام المطاعم">
+                    </div>
+                    <div class="system-description">
+                        <div class="system-excerpt">
+                            "وحدة متخصصة ضمن النظام المحاسبي لإدارة المطاعم والكافتيريات، تتضمن نظام نقاط بيع متقدم مع تكامل محاسبي كامل."
+                        </div>
+                        
+                        <h3>المميزات المحاسبية:</h3>
+                        <ul class="features-list">
+                            <li>تكامل محاسبي مع نظام نقاط البيع</li>
+                            <li>إدارة المخزون وتكلفة المواد محاسبياً</li>
+                            <li>تحليل تكلفة الوجبات والأرباح</li>
+                            <li>تقارير مالية عن المبيعات والطلبات</li>
+                            <li>ربط حسابات الموردين والعملاء</li>
+                        </ul>
+                        
+                        <a href="contact.html" class="btn">اطلب الوحدة</a>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Factory Management -->
+            <article id="factory" class="system-article">
+                <h2><i class="fas fa-industry" style="margin-left: 10px;"></i> وحدة إدارة المصانع</h2>
+                <div class="system-content">
+                    <div class="system-image">
+                        <img src="./img/10.jpg" alt="نظام إدارة المصانع">
+                    </div>
+                    <div class="system-description">
+                        <div class="system-excerpt">
+                            "وحدة متكاملة ضمن النظام المحاسبي لمراقبة الإنتاج وإدارة خطوط التصنيع، تمنحك رؤية محاسبية شاملة لعمليات المصنع."
+                        </div>
+                        
+                        <h3>المميزات المحاسبية:</h3>
+                        <ul class="features-list">
+                            <li>حساب تكلفة الإنتاج بدقة</li>
+                            <li>تقييم المخزون وفق معايير محاسبية</li>
+                            <li>تحليل التكاليف والأرباح</li>
+                            <li>تقارير مالية عن الإنتاج والمبيعات</li>
+                            <li>تكامل محاسبي مع المشتريات والمبيعات</li>
+                        </ul>
+                        
+                        <a href="contact.html" class="btn">اطلب الوحدة</a>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Trade Management -->
+            <article id="trade" class="system-article">
+                <h2><i class="fas fa-store" style="margin-left: 10px;"></i> وحدة إدارة التجارة</h2>
+                <div class="system-content">
+                    <div class="system-image">
+                        <img src="./img/2.jpg" alt="نظام التجارة">
+                    </div>
+                    <div class="system-description">
+                        <div class="system-excerpt">
+                            "وحدة متكاملة ضمن النظام المحاسبي لإدارة المخازن والتجارة العامة، تمنحك تحكماً محاسبياً كاملاً في عمليات الجرد والتخزين."
+                        </div>
+                        
+                        <h3>المميزات المحاسبية:</h3>
+                        <ul class="features-list">
+                            <li>تقييم المخزون وفق معايير محاسبية</li>
+                            <li>تكامل محاسبي مع المشتريات والمبيعات</li>
+                            <li>تقارير مالية عن حركة المخزون</li>
+                            <li>إدارة تعدد المخازن والفروع</li>
+                            <li>حساب تكلفة المخزون والأرباح</li>
+                        </ul>
+                        
+                        <a href="contact.html" class="btn">اطلب الوحدة</a>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Schools Management -->
+            <article id="schools" class="system-article">
+                <h2><i class="fas fa-school" style="margin-left: 10px;"></i> وحدة إدارة المدارس</h2>
+                <div class="system-content">
+                    <div class="system-image">
+                        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="نظام المدارس">
+                    </div>
+                    <div class="system-description">
+                        <div class="system-excerpt">
+                            "وحدة متكاملة ضمن النظام المحاسبي لإدارة المدارس، تتيح إدارة كافة العمليات المالية والإدارية مع تكامل محاسبي كامل."
+                        </div>
+                        
+                        <h3>المميزات المحاسبية:</h3>
+                        <ul class="features-list">
+                            <li>إدارة الرسوم المالية والمدفوعات</li>
+                            <li>تسجيل المصروفات والإيرادات</li>
+                            <li>تقارير مالية عن حركة الحسابات</li>
+                            <li>تكامل مع حسابات الموردين والعملاء</li>
+                            <li>إدارة رواتب الموظفين والمعلمين</li>
+                        </ul>
+                        
+                        <a href="contact.html" class="btn">اطلب الوحدة</a>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Hospitals Management -->
+            <article id="hospitals" class="system-article">
+                <h2><i class="fas fa-hospital" style="margin-left: 10px;"></i> وحدة إدارة المستشفيات</h2>
+                <div class="system-content">
+                    <div class="system-image">
+                        <img src="./img/6.jpg" alt="نظام المستشفيات">
+                    </div>
+                    <div class="system-description">
+                        <div class="system-excerpt">
+                            "وحدة متكاملة ضمن النظام المحاسبي لإدارة المستشفيات، تساعد في إدارة كافة العمليات المالية والطبية مع تكامل محاسبي."
+                        </div>
+                        
+                        <h3>المميزات المحاسبية:</h3>
+                        <ul class="features-list">
+                            <li>إدارة الفواتير الطبية والمصاريف</li>
+                            <li>تسجيل الإيرادات والمصروفات</li>
+                            <li>إدارة المخزون الطبي محاسبياً</li>
+                            <li>تقارير مالية عن أداء المستشفى</li>
+                            <li>تكامل مع حسابات المرضى والموردين</li>
+                        </ul>
+                        
+                        <a href="contact.html" class="btn">اطلب الوحدة</a>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Offices Management -->
+            <article id="offices" class="system-article">
+                <h2><i class="fas fa-building" style="margin-left: 10px;"></i> وحدة إدارة المكاتب</h2>
+                <div class="system-content">
+                    <div class="system-image">
+                        <img src="./img/5.jpg" alt="نظام المكاتب">
+                    </div>
+                    <div class="system-description">
+                        <div class="system-excerpt">
+                            "وحدة متكاملة ضمن النظام المحاسبي لإدارة المكاتب والشركات، توفر حلولاً محاسبية وإدارية شاملة بمختلف أحجام المؤسسات."
+                        </div>
+                        
+                        <h3>المميزات المحاسبية:</h3>
+                        <ul class="features-list">
+                            <li>إدارة الحسابات المالية المتكاملة</li>
+                            <li>تسجيل المصروفات والإيرادات</li>
+                            <li>إدارة الرواتب والحسابات البنكية</li>
+                            <li>تقارير مالية عن أداء الشركة</li>
+                            <li>تكامل مع حسابات العملاء والموردين</li>
+                        </ul>
+                        
+                        <a href="contact.html" class="btn">اطلب الوحدة</a>
+                    </div>
+                </div>
+            </article>
+            
+            <!-- Customization Section -->
+            <section class="customization-section">
+                <div class="customization-container">
+                    <h2>تخصيص النظام حسب احتياجات عملك</h2>
+                    <p>
+                        نتفهم أن لكل عمل متطلباته الفريدة. لذلك نقدم خدمة التخصيص الشامل للنظام المحاسبي لتلبية احتياجاتك الخاصة. سواء كنت بحاجة إلى إضافة وظائف جديدة، تعديل التقارير، أو دمج النظام مع أنظمة أخرى، فريقنا جاهز لتحقيق رؤيتك.
+                    </p>
+                    
+                  
+                    
+                    <div class="customization-features">
+                        <div class="customization-feature">
+                            <i class="fas fa-cogs"></i>
+                            <h3>تعديلات حسب الطلب</h3>
+                            <p>نقوم بتعديل أي جزء من النظام ليناسب عملياتك الخاصة</p>
+                        </div>
+                        
+                        <div class="customization-feature">
+                            <i class="fas fa-file-invoice"></i>
+                            <h3>تقارير مخصصة</h3>
+                            <p>تصميم تقارير مالية خاصة باحتياجات إدارتك</p>
+                        </div>
+                        
+                        <div class="customization-feature">
+                            <i class="fas fa-plug"></i>
+                            <h3>تكامل الأنظمة</h3>
+                            <p>دمج النظام المحاسبي مع أنظمتك الحالية بسلاسة</p>
+                        </div>
+                        
+                        <div class="customization-feature">
+                            <i class="fas fa-user-cog"></i>
+                            <h3>واجهات مستخدم مخصصة</h3>
+                            <p>تصميم واجهات المستخدم حسب رغبة فريق عملك</p>
+                        </div>
+                    </div>
+                    
+                    <a href="https://wa.me/967779749491" class="whatsapp-btn-large">
+                        <i class="fab fa-whatsapp"></i> تواصل معنا عبر واتساب
+                    </a>
+                    
+                    <p style="margin-top: 30px; font-size: 1.1rem;">
+                        تحدث مع أحد خبرائنا الآن لتحديد متطلباتك والحصول على نظام محاسبي مصمم خصيصاً لعملك
+                    </p>
+                </div>
+            </section>
+            
+            <!-- Contact Info -->
+            <div class="contact-info">
+                <h3>للتواصل معنا وطلب النظام المحاسبي</h3>
+                <div class="contact-methods">
+                    <div class="contact-method">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>واتساب: 967779749491+</span>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fas fa-phone"></i>
+                        <span>هاتف: 777268083</span>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fas fa-phone"></i>
+                        <span>هاتف: 779749491</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2023 نظام محاسبي سهيل سوفت. جميع الحقوق محفوظة.</p>
+                <p>تطوير وتصميم: فريق سهيل سوفت للبرمجيات</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+            } else {
+                header.style.boxShadow = 'none';
+                header.style.background = 'white';
+            }
+        });
+        
+        // WhatsApp button click event
+        document.querySelector('.whatsapp-btn-large').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.open(this.href, '_blank');
+            alert('جارٍ تحويلك إلى واتساب للتواصل مع فريق الدعم. رقمنا: 967779749491+');
+        });
+    </script>
+</body>
+</html>

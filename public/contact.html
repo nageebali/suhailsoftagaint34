@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اتصل بنا - SuhailSoft</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #1a6dcc 0%, #0d4a9e 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+        .section-title {
+            text-align: center;
+            color: #0d4a9e;
+            margin: 40px 0 30px;
+            font-size: 2.2rem;
+        }
+        .contact-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        .contact-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .contact-card:hover {
+            transform: translateY(-10px);
+        }
+        .contact-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .whatsapp-icon { color: #25D366; }
+        .phone-icon { color: #1a6dcc; }
+        .email-icon { color: #D44638; }
+        .youtube-icon { color: #FF0000; }
+        .facebook-icon { color: #1877F2; }
+        .contact-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #0d4a9e;
+        }
+        .contact-info {
+            font-size: 1.2rem;
+            margin: 15px 0;
+            direction: ltr;
+        }
+        .contact-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 50px;
+            margin-top: 15px;
+            transition: all 0.3s;
+            color: white;
+        }
+        .whatsapp-btn {
+            background: #25D366;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+        .whatsapp-btn:hover {
+            background: #1DA851;
+        }
+        .phone-btn {
+            background: #1a6dcc;
+            box-shadow: 0 4px 15px rgba(26, 109, 204, 0.3);
+        }
+        .phone-btn:hover {
+            background: #1458a8;
+        }
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 10px;
+            transition: all 0.3s;
+        }
+        .social-btn:hover {
+            transform: scale(1.1);
+        }
+        .social-media {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .social-media h3 {
+            font-size: 1.5rem;
+            color: #0d4a9e;
+            margin-bottom: 20px;
+        }
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2.2rem; }
+            .section-title { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>اتصل بنا</h1>
+            <p>تواصل معنا عبر القنوات المتاحة</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="contact-container">
+            <div class="contact-card">
+                <div class="contact-icon whatsapp-icon">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <h3 class="contact-title">واتساب</h3>
+                <p>تواصل معنا مباشرة عبر الواتساب</p>
+                <div class="contact-info">
+                    <i class="fab fa-whatsapp"></i> +967779749491
+                </div>
+                <a href="https://wa.me/967779749491" target="_blank" class="contact-btn whatsapp-btn">
+                    <i class="fab fa-whatsapp"></i> ابدأ المحادثة
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon phone-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h3 class="contact-title">هاتف</h3>
+                <p>اتصل بنا خلال ساعات العمل</p>
+                <div class="contact-info">
+                    <i class="fas fa-phone"></i> 777268083
+                </div>
+                <a href="tel:777268083" class="contact-btn phone-btn">
+                    <i class="fas fa-phone-alt"></i> اتصل الآن
+                </a>
+            </div>
+        </div>
+
+        <div class="social-media">
+            <h3>تابعنا على وسائل التواصل الاجتماعي</h3>
+            <div>
+                <a href="https://www.youtube.com/@suhailsoft5845" target="_blank" class="social-btn" style="background: #FF0000;">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="https://www.facebook.com/suhailsoft2017" target="_blank" class="social-btn" style="background: #1877F2;">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://wa.me/967779749491" target="_blank" class="social-btn" style="background: #25D366;">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2023 SuhailSoft - جميع الحقوق محفوظة</p>
+        </div>
+    </footer>
+</body>
+</html>

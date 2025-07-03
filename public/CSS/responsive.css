@@ -1,0 +1,75 @@
+/* تصميم متجاوب */
+@media (max-width: 992px) {
+    .systems-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    
+    .system-image {
+        height: 180px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-top {
+        flex-direction: column;
+    }
+    
+    .logo {
+        margin-bottom: 15px;
+    }
+    
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    nav ul li {
+        margin: 5px;
+    }
+    
+    nav ul li a {
+        padding: 10px 15px;
+    }
+    
+    .hero {
+        padding: 80px 0;
+    }
+    
+    .hero-content h2 {
+        font-size: 32px;
+    }
+    
+    .section-title {
+        font-size: 28px;
+    }
+    
+    .specialized-systems .section-title {
+        font-size: 28px;
+    }
+    
+    .system-card.with-image h3 {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 576px) {
+    .systems-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .system-image {
+        height: 220px;
+    }
+    
+    .section-title {
+        font-size: 24px;
+    }
+    
+    .hero-content h2 {
+        font-size: 28px;
+    }
+    
+    .hero-content p {
+        font-size: 16px;
+    }
+}

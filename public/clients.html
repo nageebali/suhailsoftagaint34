@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آراء العملاء - النظام المحاسبي | SuhailSoft</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #0d4a9e;
+            --primary-light: #1a6dcc;
+            --secondary: #0d9e5e;
+            --dark: #1a2a4a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --white: #ffffff;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8faff 0%, #e6f0ff 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: var(--white);
+            padding: 60px 0 80px;
+            border-radius: 0 0 30px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(90deg, var(--secondary), #0d9e9e);
+        }
+        
+        .header-content {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo-circle {
+            width: 100px;
+            height: 100px;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+        }
+        
+        .logo-circle i {
+            font-size: 3.5rem;
+            color: var(--primary);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+        }
+        
+        /* Testimonials Section */
+        .section-title {
+            text-align: center;
+            margin: 60px 0 40px;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            display: inline-block;
+            position: relative;
+            padding: 0 20px;
+        }
+        
+        .section-title h2::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+        }
+        
+        .testimonials-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .testimonial-card {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            max-width: 350px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .testimonial-card::before {
+            content: """;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 6rem;
+            font-family: Georgia, serif;
+            color: rgba(13, 74, 158, 0.05);
+            line-height: 1;
+        }
+        
+        .rating {
+            color: #ffc107;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .testimonial-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            color: #444;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .client-info {
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-light), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--white);
+            margin-left: 15px;
+        }
+        
+        .client-details {
+            flex: 1;
+        }
+        
+        .client-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--dark);
+        }
+        
+        .client-title {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+        
+        /* Features Section */
+        .features {
+            background: var(--white);
+            border-radius: 25px;
+            box-shadow: var(--shadow);
+            padding: 50px 40px;
+            margin: 60px 0;
+            text-align: center;
+        }
+        
+        .features-title {
+            color: var(--primary);
+            margin-bottom: 40px;
+            font-size: 2rem;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            padding: 25px;
+            border-radius: 15px;
+            background: var(--light);
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            background: var(--primary-light);
+            color: var(--white);
+            transform: translateY(-5px);
+        }
+        
+        .feature-card:hover .feature-icon {
+            background: var(--white);
+            color: var(--primary);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 20px;
+            transition: all 0.3s;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-desc {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* Call to Action */
+        .cta {
+            text-align: center;
+            margin: 60px 0;
+        }
+        
+        .cta-title {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .cta-subtitle {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: var(--gray);
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 18px 45px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(13, 74, 158, 0.3);
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(13, 74, 158, 0.4);
+            background: linear-gradient(135deg, var(--primary-light), #0d9e7e);
+        }
+        
+        /* Contact Form */
+        .contact-form {
+            background: var(--white);
+            border-radius: 25px;
+            box-shadow: var(--shadow);
+            padding: 50px;
+            margin: 60px 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .form-title {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13, 74, 158, 0.1);
+            outline: none;
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: linear-gradient(135deg, var(--primary-light), #0d9e7e);
+            transform: translateY(-2px);
+        }
+        
+        /* Success Message */
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            border: 1px solid #c3e6cb;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--gray);
+            padding: 30px;
+            font-size: 1.1rem;
+        }
+        
+        .copyright {
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .testimonial-card {
+                max-width: 100%;
+            }
+            
+            .stats {
+                gap: 20px;
+            }
+            
+            .stat-item {
+                padding: 12px 20px;
+            }
+            
+            .stat-value {
+                font-size: 2rem;
+            }
+            
+            .contact-form {
+                padding: 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.7rem;
+            }
+            
+            .stats {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .contact-form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <div class="logo-circle">
+                    <i class="fas fa-calculator"></i>
+                </div>
+            </div>
+            <div class="header-content">
+                <h1>آراء عملائنا في النظام المحاسبي</h1>
+                <p class="subtitle">اكتشف لماذا اختار المئات من الشركات نظام SuhailSoft المحاسبي لإدارة أموالهم ودفع أعمالهم نحو النجاح</p>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value">+500</div>
+                    <div class="stat-label">شركة راضية</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">98%</div>
+                    <div class="stat-label">رضا العملاء</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">40%</div>
+                    <div class="stat-label">توفير في الوقت</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="section-title">
+            <h2>ماذا يقول عملاؤنا</h2>
+        </div>
+        
+        <div class="testimonials-container">
+            <div class="testimonial-card">
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">
+                    "بعد تجربة عدة أنظمة محاسبية، وجدنا في SuhailSoft الحل الأمثل. النظام سهل الاستخدام مع قدرات متقدمة في إدارة الفواتير والمصروفات والمبيعات. وفر لنا أكثر من 40 ساعة عمل أسبوعياً!"
+                </p>
+                <div class="client-info">
+                    <div class="avatar">أ</div>
+                    <div class="client-details">
+                        <div class="client-name">أحمد السويدي</div>
+                        <div class="client-title">مدير مالي - شركة الأفق للتجارة</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">
+                    "ما أدهشني في النظام المحاسبي لـ SuhailSoft هو الجمع بين الدقة المحاسبية المطلقة وسهولة الاستخدام. تقارير مالية مفصلة بنقرة واحدة، ومزامنة تلقائية مع البنوك. أنصح به كل صاحب عمل!"
+                </p>
+                <div class="client-info">
+                    <div class="avatar">م</div>
+                    <div class="client-details">
+                        <div class="client-name">منى القاسمي</div>
+                        <div class="client-title">محاسبة - متجر أزياء إلكتروني</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">
+                    "النظام المحاسبي لـ SuhailSoft غير طريقة عملنا بالكامل. من إدارة المصروفات إلى متابعة الذمم المالية، كل شيء أصبح منظماً ويمكن الوصول إليه من أي مكان. الدعم الفني ممتاز وسريع الاستجابة."
+                </p>
+                <div class="client-info">
+                    <div class="avatar">خ</div>
+                    <div class="client-details">
+                        <div class="client-name">خالد المرزوقي</div>
+                        <div class="client-title">مدير عمليات - مجموعة تجارية</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="features">
+            <h3 class="features-title">ميزات تجعل نظامنا المحاسبي الأفضل</h3>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h4 class="feature-title">سرعة فائقة</h4>
+                    <p class="feature-desc">معالجة البيانات المالية بسرعة قياسية مع تقارير فورية</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h4 class="feature-title">أمان متكامل</h4>
+                    <p class="feature-desc">تشفير متقدم للبيانات مع نسخ احتياطية يومية</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-sync"></i>
+                    </div>
+                    <h4 class="feature-title">مزامنة تلقائية</h4>
+                    <p class="feature-desc">تكامل سلس مع أنظمة البنوك والضرائب والأنظمة الأخرى</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h4 class="feature-title">دعم فني دائم</h4>
+                    <p class="feature-desc">فريق دعم فني متاح 24/7 لمساعدتك في أي وقت</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Form Section -->
+        <div class="contact-form">
+            <h3 class="form-title">شاركنا رأيك</h3>
+            <form id="feedbackForm">
+                <div class="form-group">
+                    <label for="name" class="form-label">الاسم الكامل</label>
+                    <input type="text" id="name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">البريد الإلكتروني</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="company" class="form-label">الشركة (اختياري)</label>
+                    <input type="text" id="company" class="form-control">
+                </div>
+                
+                <div class="form-group">
+                    <label for="rating" class="form-label">التقييم</label>
+                    <select id="rating" class="form-control" required>
+                        <option value="">اختر تقييمك</option>
+                        <option value="5">5 نجوم - ممتاز</option>
+                        <option value="4">4 نجوم - جيد جداً</option>
+                        <option value="3">3 نجوم - جيد</option>
+                        <option value="2">2 نجوم - مقبول</option>
+                        <option value="1">1 نجمة - ضعيف</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message" class="form-label">رسالتك</label>
+                    <textarea id="message" class="form-control" required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">إرسال الرسالة</button>
+                
+                <div id="successMessage" class="success-message">
+                    <i class="fas fa-check-circle" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                    <h4>شكراً لك!</h4>
+                    <p>تم استلام رسالتك بنجاح وسنتواصل معك قريباً.</p>
+                </div>
+            </form>
+        </div>
+        
+        <div class="cta">
+            <h3 class="cta-title">جاهز لتحويل إدارة شؤونك المالية؟</h3>
+            <p class="cta-subtitle">انضم إلى أكثر من 500 شركة تثق بنظام SuhailSoft المحاسبي لإدارة شؤونها المالية بدقة وسهولة</p>
+            <a href="https://wa.me/967779749491" class="cta-button">ابدأ تجربتك المجانية الآن على واتساب</a>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>تواصل معنا: هاتف: 779749491 | البريد: info@suhailsoft.com</p>
+                <p class="copyright">© 2025 SuhailSoft - جميع الحقوق محفوظة</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Testimonial cards animation
+            const testimonialCards = document.querySelectorAll('.testimonial-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            testimonialCards.forEach(card => {
+                card.style.opacity = 0;
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(card);
+            });
+            
+            // Button hover effect enhancement
+            const ctaButton = document.querySelector('.cta-button');
+            ctaButton.addEventListener('mouseenter', () => {
+                ctaButton.style.transform = 'translateY(-3px)';
+            });
+            
+            ctaButton.addEventListener('mouseleave', () => {
+                ctaButton.style.transform = 'translateY(0)';
+            });
+            
+            // Form submission handling
+            const feedbackForm = document.getElementById('feedbackForm');
+            const successMessage = document.getElementById('successMessage');
+            
+            feedbackForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Here you would normally send the form data to a server
+                // For this example, we'll just show the success message
+                
+                // Hide form and show success message
+                feedbackForm.style.display = 'none';
+                successMessage.style.display = 'block';
+                
+                // Reset form after 5 seconds (for demo purposes)
+                setTimeout(() => {
+                    feedbackForm.reset();
+                    feedbackForm.style.display = 'block';
+                    successMessage.style.display = 'none';
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>
