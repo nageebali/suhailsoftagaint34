@@ -18,6 +18,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+const {saveNewUser} = require('./supabaseService');
 
 const callbackURL = process.env.NODE_ENV === 'production' 
   ? 'https://suhailsoft.com/auth/google/callback' 
@@ -28,6 +29,15 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: callbackURL // يتغير تلقائيًا حسب البيئة
 }, (token, refreshToken, profile, done) => { 
+
+ let userContent ={ username:profile.displayName, password:'password', phoneNumber:'9677772683833', instantToken:'nageebali' } ;
+
+      
+
+        
+        
+  saveNewUser(userContent);
+  console.log('profile:',profile);
 
   return done(null, profile);
 
@@ -54,7 +64,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/auth/google',
-    passport.authenticate('google', { scope: ['profile', 'email'] })
+    passport.authenticate('google', { scope: ['profile', 'email','phone'] })
 );
 
 app.get('/auth/google/callback',
