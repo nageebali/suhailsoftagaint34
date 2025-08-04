@@ -87,13 +87,17 @@ app.get('/logout', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  let userContent ={ username:'profile.displayName', password:'password', phoneNumber:'9677772683033', instantToken:'nageebali' } ;
+//  let userContent ={ username:'profile.displayName', password:'password', phoneNumber:'9677772683033', instantToken:'nageebali' } ;
 
       
 
         
         
-  saveNewUser(userContent);
+  //saveNewUser(userContent);
 
     console.log(`الخادم يعمل على http://localhost:${PORT}`);
 });
+
+app.get('/google74f1db194f961b81.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public','google74f1db194f961b81.html'));
+  });
