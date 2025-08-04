@@ -60,7 +60,8 @@ passport.deserializeUser((user, done) => done(null, user));
 
 // Routes
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.get('/auth/google',
@@ -86,5 +87,13 @@ app.get('/logout', (req, res) => {
 });
 
 app.listen(PORT, () => {
+  let userContent ={ username:'profile.displayName', password:'password', phoneNumber:'9677772683033', instantToken:'nageebali' } ;
+
+      
+
+        
+        
+  saveNewUser(userContent);
+
     console.log(`الخادم يعمل على http://localhost:${PORT}`);
 });
