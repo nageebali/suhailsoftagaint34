@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        .login-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+        }
+        
+        .login-container h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        .login-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+            margin-bottom: 10px;
+        }
+        
+        .login-btn:hover {
+            background-color: #45a049;
+        }
+        
+        .google-btn {
+            background-color: #fff;
+            color: #757575;
+            border: 1px solid #ddd;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .google-btn:hover {
+            background-color: #f7f7f7;
+        }
+        
+        .google-icon {
+            width: 20px;
+            margin-left: 10px;
+        }
+        
+        .forgot-password {
+            margin-top: 15px;
+            display: block;
+            color: #666;
+            text-decoration: none;
+        }
+        
+        .forgot-password:hover {
+            color: #333;
+        }
+        
+        .logo {
+            margin-bottom: 20px;
+            max-width: 150px;
+        }
+        
+        .divider {
+            margin: 20px 0;
+            color: #ddd;
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .divider::before {
+            margin-right: 10px;
+        }
+        
+        .divider::after {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <img src="logo.png" alt="شعار الشركة" class="logo">
+        <h2>تسجيل الدخول</h2>
+        
+        <!-- زر تسجيل الدخول باستخدام جوجل -->
+        <button class="google-btn" onclick="window.location.href='https://accounts.google.com/'">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="جوجل" class="google-icon">
+            تسجيل الدخول باستخدام جوجل
+        </button>
+        
+        <div class="divider">أو</div>
+        
+        <form action="/login" method="POST">
+            <div class="input-group">
+                <label for="username">اسم المستخدم</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">كلمة المرور</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="login-btn">تسجيل الدخول</button>
+            
+            <a href="#" class="forgot-password">نسيت كلمة المرور؟</a>
+        </form>
+    </div>
+</body>
+</html>
