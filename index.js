@@ -19,16 +19,30 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// تكوين Passport مع Google
+const callbackURL = process.env.NODE_ENV === 'production' 
+  ? 'https://suhailsoft.com/auth/google/callback' 
+  : 'http://localhost:3000/auth/google/callback';
+
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:3000/auth/google/callback"
-},
-(accessToken, refreshToken, profile, done) => {
-    // هنا يمكنك حفظ بيانات المستخدم في قاعدة البيانات
-    return done(null, profile);
+    callbackURL: callbackURL // يتغير تلقائيًا حسب البيئة
+}, (token, refreshToken, profile, done) => { 
+
+  return done(null, profile);
+
 }));
+
+// تكوين Passport مع Google
+// passport.use(new GoogleStrategy({
+//     clientID: process.env.GOOGLE_CLIENT_ID,
+//     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+//     callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:3000/auth/google/callback"
+// },
+// (accessToken, refreshToken, profile, done) => {
+//     // هنا يمكنك حفظ بيانات المستخدم في قاعدة البيانات
+//     return done(null, profile);
+// }));
 
 // Serialize/Deserialize User
 passport.serializeUser((user, done) => done(null, user));
