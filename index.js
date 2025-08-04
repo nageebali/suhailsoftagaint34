@@ -47,7 +47,7 @@ app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
         // بعد تسجيل الدخول الناجح
-        res.redirect(path.join(__dirname, 'public', 'dashboard.html'));
+        res.redirect( '/');
     }
 );
 
