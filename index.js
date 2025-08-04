@@ -6,7 +6,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT =   process.env.PORT||3001;
 
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')));
@@ -35,10 +35,15 @@ passport.use(new GoogleStrategy({
       
 
         
-        
-  saveNewUser(userContent);
-  console.log('profile:',profile);
+   try {
+         saveNewUser(userContent);
+       console.log('profile:',profile);
 
+   } catch (error) {
+    console.log('error:',error);
+
+   }     
+ 
   return done(null, profile);
 
 }));
@@ -100,4 +105,9 @@ app.listen(PORT, () => {
 
 app.get('/google74f1db194f961b81.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'public','google74f1db194f961b81.html'));
+  });
+
+  process.on('uncaughtException', (err) => {
+    console.error('حدث خطأ غير معالج:', err);
+    // لا توقف العملية هنا إذا كنت تريد استمرار التشغيل
   });
