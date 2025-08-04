@@ -1,53 +1,66 @@
-const express = require('express');
-const path = require('path');
-
-const PORT = process.env.PORT || 3000;
-
-// Serve static files from the public directory
-app.use(express.static('public'));
-
-// Route for the main page
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Start the server
-
-
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const path = require('path');
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Middleware للجلسات
+// Middleware
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-  secret: 'your-secret-key',
-  resave: false,
-  saveUninitialized: false
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    resave: false,
+    saveUninitialized: false
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Passport config
+// تكوين Passport مع Google
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/auth/google/callback"
-  },
-  (accessToken, refreshToken, profile, done) => {
+    callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:3000/auth/google/callback"
+},
+(accessToken, refreshToken, profile, done) => {
+    // هنا يمكنك حفظ بيانات المستخدم في قاعدة البيانات
     return done(null, profile);
-  }
-));
+}));
+
+// Serialize/Deserialize User
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
 
 // Routes
-app.get('/', (req, res) => res.send('<a href="/auth/google">Login with Google</a>'));
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => res.redirect('/dashboard')
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+app.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/' }),
+    (req, res) => {
+        // بعد تسجيل الدخول الناجح
+        res.redirect(path.join(__dirname, 'public', 'dashboard.html'));
+    }
+);
+
+app.get('/dashboard', (req, res) => {
+    if (!req.isAuthenticated()) return res.redirect('/');
+    res.send(`<h1>مرحباً ${req.user.displayName}</h1><a href="/logout">تسجيل الخروج</a>`);
+});
+
+app.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+});
+
+app.listen(PORT, () => {
+    console.log(`الخادم يعمل على http://localhost:${PORT}`);
+});
