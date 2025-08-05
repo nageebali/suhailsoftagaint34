@@ -127,7 +127,7 @@ passport.use(new GoogleStrategy({
       instantToken: crypto.randomBytes(32).toString('hex')
     };
     
-    await saveNewUser(userContent);
+   // await saveNewUser(userContent);
     logger.info(`تم تسجيل مستخدم جديد: ${userContent.email}`);
     return done(null, profile);
   } catch (error) {
@@ -172,6 +172,18 @@ app.get('/auth/google',
 );
 
 app.get('/auth/google/callback',
+  passport.authenticate('google', { 
+    failureRedirect: '/login',
+    failureFlash: true 
+  }),
+  (req, res) => {
+    logger.info(`تم تسجيل الدخول بنجاح للمستخدم: ${req.user?.emails?.[0]?.value}`);
+    res.redirect('/dashboard.html');
+  }
+);
+
+
+app.get('/api/auth/callback/google',
   passport.authenticate('google', { 
     failureRedirect: '/login',
     failureFlash: true 
@@ -243,6 +255,7 @@ app.use((err, req, res, next) => {
   });
 
   if (req.accepts('html')) {
+
     res.status(statusCode).sendFile(path.join(__dirname, 'public', 'error.html'));
   } else {
     res.status(statusCode).json({
