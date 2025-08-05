@@ -21,8 +21,8 @@ app.use(passport.session());
 const {saveNewUser} = require('./supabaseService');
 
 const callbackURL = process.env.NODE_ENV === 'production' 
-  ? 'https://suhailsoft.com/auth/google/callback' 
-  : 'http://localhost:3000/auth/google/callback';
+  ? 'https://suhailsoft.com/api/auth/callback/google' 
+  : 'http://localhost:3000/api/auth/callback/google';
 
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -52,7 +52,7 @@ passport.use(new GoogleStrategy({
 // passport.use(new GoogleStrategy({
 //     clientID: process.env.GOOGLE_CLIENT_ID,
 //     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-//     callbackURL: process.env.GOOGLE_CALLBACK_URL || "http://localhost:3000/auth/google/callback"
+//     callbackURL: process.env.GOOGLE_CALLBACK_URL || "https://suhailsoft.com/api/auth/callback/google"
 // },
 // (accessToken, refreshToken, profile, done) => {
 //     // هنا يمكنك حفظ بيانات المستخدم في قاعدة البيانات
@@ -79,6 +79,13 @@ app.get('/auth/google/callback',
         // بعد تسجيل الدخول الناجح
         res.redirect( '/');
     }
+);
+app.get('/api/auth/callback/google',
+  passport.authenticate('google', { failureRedirect: '/' }),
+  (req, res) => {
+      // بعد تسجيل الدخول الناجح
+      res.redirect( '/dashboard.html');
+  }
 );
 
 app.get('/dashboard', (req, res) => {
