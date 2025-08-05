@@ -54,8 +54,8 @@ app.use(passport.session());
 // =============================================
 
 const callbackURL = process.env.NODE_ENV === 'production'
-  ? 'https://suhailsoft.com/auth/google/callback'
-  : 'http://localhost:3000/auth/google/callback';
+  ? 'https://suhailsoft.com/api/auth/callback/google'
+  : 'http://localhost:3000/api/auth/callback/google';
 
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
