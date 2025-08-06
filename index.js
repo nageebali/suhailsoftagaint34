@@ -9,6 +9,7 @@ const rateLimit = require('express-rate-limit');
 const winston = require('winston');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
+const flash = require('connect-flash'); // أضفنا هذه المكتبة
 const { saveNewUser } = require('./supabaseService');
 
 // =============================================
@@ -34,11 +35,11 @@ const logger = winston.createLogger({
     new winston.transports.File({ 
       filename: 'logs/error.log', 
       level: 'error',
-      maxsize: 5 * 1024 * 1024 // 5MB
+      maxsize: 5 * 1024 * 1024
     }),
     new winston.transports.File({ 
       filename: 'logs/combined.log',
-      maxsize: 10 * 1024 * 1024 // 10MB
+      maxsize: 10 * 1024 * 1024
     })
   ]
 });
@@ -49,7 +50,7 @@ const logger = winston.createLogger({
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// إعدادات الأمان
+// إعدادات الأمان المحسنة
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -62,11 +63,11 @@ app.use(helmet({
       objectSrc: ["'none'"]
     }
   },
-  hsts: {
+  hsts: process.env.NODE_ENV === 'production' ? {
     maxAge: 63072000,
     includeSubDomains: true,
     preload: true
-  }
+  } : false
 }));
 
 // تحديد معدل الطلبات
@@ -86,9 +87,10 @@ app.use(limiter);
 //  إعدادات الجلسة والمسار
 // =============================================
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(flash()); // أضفنا middleware للرسائل الفلاشية
 
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex'),
   resave: false,
   saveUninitialized: false,
   name: 'secureSession',
@@ -98,7 +100,8 @@ app.use(session({
     maxAge: 24 * 60 * 60 * 1000,
     sameSite: 'lax',
     domain: process.env.NODE_ENV === 'production' ? '.suhailsoft.com' : undefined
-  }
+  },
+  store: process.env.NODE_ENV === 'production' ? new (require('connect-pg-simple')(session))() : null
 }));
 
 // =============================================
@@ -108,7 +111,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const callbackURL = process.env.NODE_ENV === 'production'
-  ? 'https://suhailsoft.com/auth/google/callback'
+  ? 'https://www.suhailsoft.com/auth/google/callback' // أضفنا www
   : 'http://localhost:3000/auth/google/callback';
 
 passport.use(new GoogleStrategy({
@@ -116,20 +119,25 @@ passport.use(new GoogleStrategy({
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: callbackURL,
   scope: ['profile', 'email'],
-  state: true
-}, async (accessToken, refreshToken, profile, done) => {
+  state: true,
+  passReqToCallback: true // أضفنا هذه الخاصية
+}, async (req, accessToken, refreshToken, profile, done) => {
   try {
+    if (!profile.emails?.[0]?.value) {
+      throw new Error('البريد الإلكتروني مطلوب');
+    }
+
     const userContent = {
-      username: profile.displayName,
-      email: profile.emails?.[0]?.value,
+      username: profile.displayName || `user-${crypto.randomBytes(4).toString('hex')}`,
+      email: profile.emails[0].value,
       googleId: profile.id,
       phoneNumber: '',
       instantToken: crypto.randomBytes(32).toString('hex')
     };
     
-   // await saveNewUser(userContent);
+    await saveNewUser(userContent);
     logger.info(`تم تسجيل مستخدم جديد: ${userContent.email}`);
-    return done(null, profile);
+    return done(null, userContent); // عدلنا لتمرير userContent بدلاً من profile
   } catch (error) {
     logger.error(`خطأ في حفظ المستخدم: ${error.message}`, {
       stack: error.stack,
@@ -164,46 +172,43 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// توحيد مسارات Google OAuth
 app.get('/auth/google',
   passport.authenticate('google', { 
     scope: ['profile', 'email'],
-    prompt: 'select_account'
+    prompt: 'select_account',
+    accessType: 'offline' // أضفنا للحصول على refresh token إذا لزم الأمر
   })
 );
 
 app.get('/auth/google/callback',
   passport.authenticate('google', { 
     failureRedirect: '/login',
-    failureFlash: true 
+    failureFlash: 'فشل تسجيل الدخول باستخدام جوجل' // رسالة فلاش عند الفشل
   }),
   (req, res) => {
-    logger.info(`تم تسجيل الدخول بنجاح للمستخدم: ${req.user?.emails?.[0]?.value}`);
-    res.redirect('/dashboard.html');
+    logger.info(`تم تسجيل الدخول بنجاح للمستخدم: ${req.user?.email}`);
+    res.redirect('/dashboard');
   }
 );
 
-
-app.get('/api/auth/callback/google',
-  passport.authenticate('google', { 
-    failureRedirect: '/login',
-    failureFlash: true 
-  }),
-  (req, res) => {
-    logger.info(`تم تسجيل الدخول بنجاح للمستخدم: ${req.user?.emails?.[0]?.value}`);
-    res.redirect('/dashboard.html');
-  }
-);
+// إزالة المسار المكرر /api/auth/callback/google
 
 app.get('/dashboard', (req, res) => {
   if (!req.isAuthenticated()) {
     logger.warn(`محاولة وصول غير مصرح بها إلى /dashboard من IP: ${req.ip}`);
+    req.flash('error', 'يجب تسجيل الدخول أولاً');
     return res.redirect('/login');
   }
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
 
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
 app.get('/logout', (req, res) => {
-  const userEmail = req.user?.emails?.[0]?.value || 'غير معروف';
+  const userEmail = req.user?.email || 'غير معروف';
   
   req.logout((err) => {
     if (err) {
@@ -255,8 +260,7 @@ app.use((err, req, res, next) => {
   });
 
   if (req.accepts('html')) {
-
-    res.status(statusCode).sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+    res.status(statusCode).sendFile(path.join(__dirname, 'public', statusCode === 404 ? '404.html' : '500.html'));
   } else {
     res.status(statusCode).json({
       error: statusCode === 500 ? 'خطأ في الخادم' : err.message,
@@ -264,10 +268,6 @@ app.use((err, req, res, next) => {
     });
   }
 });
-
-
-
-
 
 // =============================================
 //  بدء الخادم
