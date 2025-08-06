@@ -80,7 +80,7 @@
             return result;
         }
 
-        async function openGooglePopup() {
+        async function openGooglePopups() {
             const { codeVerifier, codeChallenge } = await generatePKCE();
             localStorage.setItem('codeVerifier', codeVerifier); // حفظ للاستخدام لاحقًا
 
@@ -117,6 +117,30 @@
 
         // عند تحميل الصفحة، تحقق مما إذا كانت هناك بيانات مستخدم
         window.onload = checkUserData;
+
+
+        async function openGooglePopup() {
+    const { codeVerifier, codeChallenge } = await generatePKCE();
+    localStorage.setItem('codeVerifier', codeVerifier);
+
+    // استخدم الرابط الصحيح للاستضافة
+    const redirectUri = window.location.host.includes('vercel.app') 
+        ? 'https://suhailsoftagaint34-4c8m.vercel.app/auth/google/callback'
+        : 'https://suhailsoft.com/auth/google/callback';
+
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?` +
+        `response_type=code&` +
+        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+        `client_id=147534173047-7ht64n693lggdt0rfmmvogh2vmgts04n.apps.googleusercontent.com&` +
+        `scope=profile%20email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuser.phonenumbers.read&` +
+        `state=if63WWgqEoGxmlUjmSeMF311&` +
+        `access_type=offline&` +
+        `prompt=consent&` +
+        `code_challenge=${codeChallenge}&` +
+        `code_challenge_method=S256`;
+
+    window.location.href = url; // توجيه مباشر بدلاً من نافذة منبثقة
+}
     </script>
 </body>
 </html>
