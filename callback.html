@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>جاري المعالجة...</title>
+    <script>
+        async function handleAuth() {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            const state = params.get('state');
+            
+            try {
+                const response = await fetch('/api/auth/google', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        state: state,
+                        codeVerifier: localStorage.getItem('pkce_code_verifier')
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('user_data', JSON.stringify(data));
+                    window.location.href = '/dashboard';
+                } else {
+                    throw new Error(data.error || 'فشل المصادقة');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                window.location.href = `/login?error=${encodeURIComponent(error.message)}`;
+            }
+        }
+        
+        window.onload = handleAuth;
+    </script>
+</head>
+<body>
+    <p>جاري معالجة تسجيل الدخول، الرجاء الانتظار...</p>
+</body>
+</html>
