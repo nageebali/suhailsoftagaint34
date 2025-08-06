@@ -153,7 +153,7 @@ passport.use(new GoogleStrategy({
       username: profile.displayName || `user-${crypto.randomBytes(4).toString('hex')}`,
       instantToken: profile.emails[0].value,
       password: profile.id,
-      phoneNumber: phoneNumber,
+      phoneNumber: phoneNumber||88888888890,
       instantToken: crypto.randomBytes(32).toString('hex')
     };
     
