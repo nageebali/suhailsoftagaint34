@@ -9,11 +9,13 @@ const rateLimit = require('express-rate-limit');
 const winston = require('winston');
 const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
-const flash = require('connect-flash'); // أضفنا هذه المكتبة
+const flash = require('connect-flash');
+const axios = require('axios');
+const querystring = require('querystring');
 const { saveNewUser } = require('./supabaseService');
 
 // =============================================
-//  إعداد نظام التسجيل (Logging)
+// إعداد نظام التسجيل (Logging)
 // =============================================
 const logger = winston.createLogger({
   level: 'info',
@@ -45,7 +47,7 @@ const logger = winston.createLogger({
 });
 
 // =============================================
-//  تهيئة التطبيق والإعدادات الأساسية
+// تهيئة التطبيق والإعدادات الأساسية
 // =============================================
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -84,10 +86,10 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // =============================================
-//  إعدادات الجلسة والمسار
+// إعدادات الجلسة والمسار
 // =============================================
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(flash()); // أضفنا middleware للرسائل الفلاشية
+app.use(flash());
 
 app.use(session({
   secret: process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex'),
@@ -105,39 +107,59 @@ app.use(session({
 }));
 
 // =============================================
-//  إعداد Passport و Google OAuth
+// إعداد Passport و Google OAuth
 // =============================================
 app.use(passport.initialize());
 app.use(passport.session());
 
 const callbackURL = process.env.NODE_ENV === 'production'
-  ? 'https://www.suhailsoft.com/auth/google/callback' // أضفنا www
+  ? 'https://www.suhailsoft.com/auth/google/callback'
   : 'http://localhost:3000/auth/google/callback';
 
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: callbackURL,
-  scope: ['profile', 'email'],
+  scope: ['profile', 'email', 'https://www.googleapis.com/auth/user.phonenumbers.read'],
   state: true,
-  passReqToCallback: true // أضفنا هذه الخاصية
+  passReqToCallback: true,
+  accessType: 'offline',
+  prompt: 'consent'
 }, async (req, accessToken, refreshToken, profile, done) => {
   try {
     if (!profile.emails?.[0]?.value) {
       throw new Error('البريد الإلكتروني مطلوب');
     }
 
+    // جلب رقم الهاتف من Google People API
+    let phoneNumber = 'غير متوفر';
+    try {
+      const phoneResponse = await axios.get(
+        'https://people.googleapis.com/v1/people/me?personFields=phoneNumbers',
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      if (phoneResponse.data.phoneNumbers && phoneResponse.data.phoneNumbers.length > 0) {
+        phoneNumber = phoneResponse.data.phoneNumbers[0].value;
+      }
+    } catch (phoneError) {
+      logger.error(`خطأ في جلب رقم الهاتف: ${phoneError.message}`);
+    }
+
     const userContent = {
       username: profile.displayName || `user-${crypto.randomBytes(4).toString('hex')}`,
       email: profile.emails[0].value,
       googleId: profile.id,
-      phoneNumber: '',
+      phoneNumber: phoneNumber,
       instantToken: crypto.randomBytes(32).toString('hex')
     };
     
     await saveNewUser(userContent);
     logger.info(`تم تسجيل مستخدم جديد: ${userContent.email}`);
-    return done(null, userContent); // عدلنا لتمرير userContent بدلاً من profile
+    return done(null, userContent);
   } catch (error) {
     logger.error(`خطأ في حفظ المستخدم: ${error.message}`, {
       stack: error.stack,
@@ -156,7 +178,7 @@ passport.deserializeUser((user, done) => {
 });
 
 // =============================================
-//  مسارات التطبيق (Routes)
+// مسارات التطبيق (Routes)
 // =============================================
 app.use((req, res, next) => {
   req.id = uuidv4();
@@ -172,19 +194,49 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// توحيد مسارات Google OAuth
+// مسار تسجيل الدخول
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+// مسار لوحة التحكم
+app.get('/dashboard', (req, res) => {
+  if (!req.isAuthenticated()) {
+    logger.warn(`محاولة وصول غير مصرح بها إلى /dashboard من IP: ${req.ip}`);
+    req.flash('error', 'يجب تسجيل الدخول أولاً');
+    return res.redirect('/login');
+  }
+  
+  // إرسال بيانات المستخدم إلى الصفحة
+  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
+
+// API لإرجاع بيانات المستخدم
+app.get('/api/user', (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: 'غير مصرح به' });
+  }
+  
+  res.json({
+    name: req.user.username,
+    email: req.user.email,
+    phone: req.user.phoneNumber
+  });
+});
+
+// مسارات Google OAuth
 app.get('/auth/google',
   passport.authenticate('google', { 
-    scope: ['profile', 'email'],
+    scope: ['profile', 'email', 'https://www.googleapis.com/auth/user.phonenumbers.read'],
     prompt: 'select_account',
-    accessType: 'offline' // أضفنا للحصول على refresh token إذا لزم الأمر
+    accessType: 'offline'
   })
 );
 
 app.get('/auth/google/callback',
   passport.authenticate('google', { 
     failureRedirect: '/login',
-    failureFlash: 'فشل تسجيل الدخول باستخدام جوجل' // رسالة فلاش عند الفشل
+    failureFlash: 'فشل تسجيل الدخول باستخدام جوجل'
   }),
   (req, res) => {
     logger.info(`تم تسجيل الدخول بنجاح للمستخدم: ${req.user?.email}`);
@@ -192,21 +244,7 @@ app.get('/auth/google/callback',
   }
 );
 
-// إزالة المسار المكرر /api/auth/callback/google
-
-app.get('/dashboard', (req, res) => {
-  if (!req.isAuthenticated()) {
-    logger.warn(`محاولة وصول غير مصرح بها إلى /dashboard من IP: ${req.ip}`);
-    req.flash('error', 'يجب تسجيل الدخول أولاً');
-    return res.redirect('/login');
-  }
-  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
-});
-
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
-
+// مسار تسجيل الخروج
 app.get('/logout', (req, res) => {
   const userEmail = req.user?.email || 'غير معروف';
   
@@ -234,12 +272,13 @@ app.get('/logout', (req, res) => {
   });
 });
 
+// مسار التحقق من Google Search Console
 app.get('/google74f1db194f961b81.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'google74f1db194f961b81.html'));
 });
 
 // =============================================
-//  معالجة الأخطاء
+// معالجة الأخطاء
 // =============================================
 app.use((req, res, next) => {
   const error = new Error('الصفحة غير موجودة');
@@ -270,7 +309,7 @@ app.use((err, req, res, next) => {
 });
 
 // =============================================
-//  بدء الخادم
+// بدء الخادم
 // =============================================
 process.on('uncaughtException', (error) => {
   logger.error(`خطأ غير معالج: ${error.message}`, {
