@@ -108,8 +108,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const callbackURL = process.env.NODE_ENV === 'production'
-  ? 'https://suhailsoft.com/api/auth/callback/google'
-  : 'http://localhost:3000/api/auth/callback/google';
+  ? 'https://suhailsoft.com/auth/google/callback'
+  : 'http://localhost:3000/auth/google/callback';
 
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
@@ -256,7 +256,7 @@ app.use((err, req, res, next) => {
 
   if (req.accepts('html')) {
 
-    res.status(statusCode).sendFile(path.join(__dirname, 'public', 'error.html'));
+    res.status(statusCode).sendFile(path.join(__dirname, 'public', 'dashboard.html'));
   } else {
     res.status(statusCode).json({
       error: statusCode === 500 ? 'خطأ في الخادم' : err.message,
@@ -264,6 +264,10 @@ app.use((err, req, res, next) => {
     });
   }
 });
+
+
+
+
 
 // =============================================
 //  بدء الخادم
