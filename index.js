@@ -45,7 +45,7 @@ const logger = winston.createLogger({
     })
   ]
 });
-
+let userContent;
 // =============================================
 // تهيئة التطبيق والإعدادات الأساسية
 // =============================================
@@ -149,7 +149,7 @@ passport.use(new GoogleStrategy({
       logger.error(`خطأ في جلب رقم الهاتف: ${phoneError.message}`);
     }
 
-    const userContent = {
+     userContent = {
       username: profile.displayName || `user-${crypto.randomBytes(4).toString('hex')}`,
       instantToken: profile.emails[0].value,
       password: profile.id,
@@ -232,6 +232,17 @@ app.get('/auth/google',
     accessType: 'offline'
   })
 );
+
+
+
+
+app.post('/auth/google',(req, res)=>{
+
+  req.json( userContent);
+}
+ 
+);
+
 
 app.get('/auth/google/callback',
   passport.authenticate('google', { 
