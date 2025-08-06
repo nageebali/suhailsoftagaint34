@@ -1,40 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>معالجة تسجيل الدخول</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>جاري المعالجة...</title>
+    <script>
+        async function handleAuth() {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            const state = params.get('state');
+            
+            try {
+                const response = await fetch('/api/auth/google', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        state: state,
+                        codeVerifier: localStorage.getItem('pkce_code_verifier')
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('user_data', JSON.stringify(data));
+                    window.location.href = '/dashboard';
+                } else {
+                    throw new Error(data.error || 'فشل المصادقة');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                window.location.href = `/login?error=${encodeURIComponent(error.message)}`;
+            }
+        }
+        
+        window.onload = handleAuth;
+    </script>
 </head>
 <body>
-    <script>
-        // استخراج المعلمات من URL
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
-        const state = params.get('state');
-        const error = params.get('error');
-
-        if (error) {
-            // معالجة الأخطاء
-            console.error('Error from Google:', error);
-            window.location.href = `/login?error=${encodeURIComponent(error)}`;
-        } else if (code) {
-            // إرسال الكود إلى الخادم
-            axios.post('/api/google-auth', {
-                code: code,
-                codeVerifier: localStorage.getItem('codeVerifier'),
-                state: state
-            })
-            .then(response => {
-                // تخزين بيانات المستخدم وإعادة التوجيه
-                localStorage.setItem('userData', JSON.stringify(response.data));
-                window.location.href = '/dashboard';
-            })
-            .catch(err => {
-                console.error('Auth Error:', err);
-                window.location.href = '/login?error=auth_failed';
-            });
-        } else {
-            window.location.href = '/';
-        }
-    </script>
+    <p>جاري معالجة تسجيل الدخول، الرجاء الانتظار...</p>
 </body>
 </html>
