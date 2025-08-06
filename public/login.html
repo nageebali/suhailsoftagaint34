@@ -3,78 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول</title>
+    <title>تسجيل الدخول عبر جوجل</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        
-        .login-container {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            width: 350px;
+            font-family: Arial, sans-serif;
             text-align: center;
+            padding: 20px;
+            background-color: #f5f5f5;
         }
-        
-        .google-btn {
-            background-color: #fff;
-            color: #757575;
-            border: 1px solid #ddd;
-            padding: 12px 20px;
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            transition: background-color 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
+            transition: background 0.3s;
         }
-        
-        .google-btn:hover {
-            background-color: #f7f7f7;
-        }
-        
-        .google-icon {
-            width: 20px;
-            margin-left: 10px;
+        button:hover {
+            background-color: #3367D6;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>تسجيل الدخول باستخدام حساب Google</h2>
+    <div class="container">
+        <h1>تسجيل الدخول عبر جوجل</h1>
+        <p>انقر على الزر أدناه للانتقال إلى صفحة تسجيل الدخول:</p>
         
-        <a href="/auth/google/callback" class="google-btn">
-            <!-- <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" class="google-icon"> -->
-            تسجيل الدخول باستخدام Google
-        </a>
-
-        <a href="https://accounts.google.com/o/oauth2/v2/auth?
-        response_type=code&
-        redirect_uri=https://suhailsoft.com/auth/google/callback&
-        client_id=147534173047-7ht64n693lggdt0rfmmvogh2vmgts04n.apps.googleusercontent.com&
-        scope=profile%20email&
-        state=if63WWgqEoGxmlUjmSeMF311&
-        access_type=offline&
-        prompt=consent&
-        code_challenge=YOUR_PKCE_CODE_CHALLENGE&
-        code_challenge_method=S256"   class="google-btn">
-    
-     <!-- <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" class="google-icon"> -->
-     تسجيل الدخول  Google
-    </a>
-       
+        <!-- الحل 1: فتح الرابط في نافذة جديدة -->
+        <button onclick="window.location.href='https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=https%3A%2F%2Fsuhailsoft.com%2Fauth%2Fgoogle%2Fcallback&client_id=147534173047-7ht64n693lggdt0rfmmvogh2vmgts04n.apps.googleusercontent.com&scope=profile%20email&state=if63WWgqEoGxmlUjmSeMF311&access_type=offline&prompt=consent'">
+            الانتقال إلى جوجل
+        </button>
+        
+        <!-- الحل 2: فتح نافذة منبثقة (مع تجاوز الحظر) -->
+        <button onclick="openGooglePopup()">
+            فتح نافذة منبثقة
+        </button>
     </div>
+
+    <script>
+        // الحل 2: فتح نافذة منبثقة مع التحكم في الحظر
+        function openGooglePopup() {
+            const url = 'https://accounts.google.com/o/oauth2/v2/auth?' +
+                'response_type=code&' +
+                'redirect_uri=https%3A%2F%2Fsuhailsoft.com%2Fauth%2Fgoogle%2Fcallback&' +
+                'client_id=147534173047-7ht64n693lggdt0rfmmvogh2vmgts04n.apps.googleusercontent.com&' +
+                'scope=profile%20email&' +
+                'state=if63WWgqEoGxmlUjmSeMF311&' +
+                'access_type=offline&' +
+                'prompt=consent';
+            
+            // فتح النافذة المنبثقة بعد حدث المستخدم (لتجنب الحظر)
+            const popup = window.open(url, 'google_auth', 'width=600,height=700');
+            
+            if (!popup) {
+                alert("يبدو أن المتصفح يحظر النوافذ المنبثقة. يُرجى السماح بالنوافذ المنبثقة لهذا الموقع.");
+            }
+        }
+
+        // الحل 3: إذا كنت تستخدم PKCE، يجب توليد code_challenge بشكل صحيح
+        // يمكنك استخدام مكتبة مثل 'oauth-1.0a' أو 'crypto-js' لتوليده
+        /*
+        async function generatePKCE() {
+            const codeVerifier = generateRandomString();
+            const codeChallenge = await sha256(codeVerifier);
+            return { codeVerifier, codeChallenge };
+        }
+        */
+    </script>
 </body>
 </html>
