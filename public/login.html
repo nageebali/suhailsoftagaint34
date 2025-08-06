@@ -87,8 +87,7 @@
 
                 // استخدم الرابط الصحيح للاستضافة
                 const redirectUri = window.location.host.includes('vercel.app') 
-                    ? 'https://suhailsoft.com/auth/google/callback'
-                    : 'http://localhost:3000/auth/google/callback';
+                    ?  'http://localhost:3000/auth/google/callback':'https://suhailsoft.com/auth/google/callback';
 
                 const url = `https://accounts.google.com/o/oauth2/v2/auth?` +
                     `response_type=code&` +
