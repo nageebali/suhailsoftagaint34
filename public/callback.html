@@ -15,7 +15,7 @@
 
         if (code) {
             // إرسال الرمز إلى الخادم الخاص بك لاستبداله بـ Access Token
-            axios.post('https://YOUR_SERVER.COM/api/google-auth', {
+            axios.post(`${window.location.origin}/auth/google`, {
                 code: code,
                 codeVerifier: localStorage.getItem('codeVerifier'),
                 state: state
@@ -23,7 +23,7 @@
             .then(response => {
                 const userData = response.data; // {name, email, phone}
                 // توجيه المستخدم مرة أخرى إلى الصفحة الرئيسية مع بياناته
-                window.location.href = `https://YOUR_SITE.COM/index.html?user=${encodeURIComponent(JSON.stringify(userData))}`;
+                window.location.href = `${window.location.origin}/index.html?user=${encodeURIComponent(JSON.stringify(userData))}`;
             })
             .catch(error => {
                 console.error('Error:', error);
