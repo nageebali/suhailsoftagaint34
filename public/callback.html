@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تم تسجيل الدخول</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <script>
+        // استخراج رمز المصادقة من الرابط
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const state = params.get('state');
+
+        if (code) {
+            // إرسال الرمز إلى الخادم الخاص بك لاستبداله بـ Access Token
+            axios.post('https://YOUR_SERVER.COM/api/google-auth', {
+                code: code,
+                codeVerifier: localStorage.getItem('codeVerifier'),
+                state: state
+            })
+            .then(response => {
+                const userData = response.data; // {name, email, phone}
+                // توجيه المستخدم مرة أخرى إلى الصفحة الرئيسية مع بياناته
+                window.location.href = `https://YOUR_SITE.COM/index.html?user=${encodeURIComponent(JSON.stringify(userData))}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.location.href = `${window.location.origin}/index.html?error=auth_failed`;
+            });
+        } else {
+            window.location.href = `${window.location.origin}/dashboard.html`;
+        }
+    </script>
+</body>
+</html>

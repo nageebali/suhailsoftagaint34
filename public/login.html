@@ -32,6 +32,11 @@
         button:hover {
             background-color: #3367D6;
         }
+        #userData {
+            margin-top: 20px;
+            text-align: right;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -39,30 +44,57 @@
         <h1>تسجيل الدخول عبر جوجل</h1>
         <p>انقر على الزر أدناه للانتقال إلى صفحة تسجيل الدخول:</p>
         
-        <!-- الحل 1: فتح الرابط في نافذة جديدة -->
-        <button onclick="window.location.href='https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=https%3A%2F%2Fsuhailsoft.com%2Fauth%2Fgoogle%2Fcallback&client_id=147534173047-7ht64n693lggdt0rfmmvogh2vmgts04n.apps.googleusercontent.com&scope=profile%20email&state=if63WWgqEoGxmlUjmSeMF311&access_type=offline&prompt=consent'">
-            الانتقال إلى جوجل
-        </button>
-        
-        <!-- الحل 2: فتح نافذة منبثقة (مع تجاوز الحظر) -->
         <button onclick="openGooglePopup()">
-            فتح نافذة منبثقة
+            تسجيل الدخول بجوجل
         </button>
+
+        <div id="userData">
+            <h2>بيانات المستخدم:</h2>
+            <p><strong>الاسم:</strong> <span id="userName"></span></p>
+            <p><strong>البريد الإلكتروني:</strong> <span id="userEmail"></span></p>
+            <p><strong>رقم الهاتف:</strong> <span id="userPhone"></span></p>
+        </div>
     </div>
 
     <script>
-        // الحل 2: فتح نافذة منبثقة مع التحكم في الحظر
-        function openGooglePopup() {
+        // توليد PKCE (Proof Key for Code Exchange)
+        async function generatePKCE() {
+            const randomString = generateRandomString(128);
+            const encoder = new TextEncoder();
+            const data = encoder.encode(randomString);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const codeChallenge = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return {
+                codeVerifier: randomString,
+                codeChallenge: codeChallenge
+            };
+        }
+
+        function generateRandomString(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        async function openGooglePopup() {
+            const { codeVerifier, codeChallenge } = await generatePKCE();
+            localStorage.setItem('codeVerifier', codeVerifier); // حفظ للاستخدام لاحقًا
+
             const url = 'https://accounts.google.com/o/oauth2/v2/auth?' +
                 'response_type=code&' +
                 'redirect_uri=https%3A%2F%2Fsuhailsoft.com%2Fauth%2Fgoogle%2Fcallback&' +
                 'client_id=147534173047-7ht64n693lggdt0rfmmvogh2vmgts04n.apps.googleusercontent.com&' +
-                'scope=profile%20email&' +
+                'scope=profile%20email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuser.phonenumbers.read&' +
                 'state=if63WWgqEoGxmlUjmSeMF311&' +
                 'access_type=offline&' +
-                'prompt=consent';
-            
-            // فتح النافذة المنبثقة بعد حدث المستخدم (لتجنب الحظر)
+                'prompt=consent&' +
+                'code_challenge=' + codeChallenge + '&' +
+                'code_challenge_method=S256';
+
             const popup = window.open(url, 'google_auth', 'width=600,height=700');
             
             if (!popup) {
@@ -70,15 +102,21 @@
             }
         }
 
-        // الحل 3: إذا كنت تستخدم PKCE، يجب توليد code_challenge بشكل صحيح
-        // يمكنك استخدام مكتبة مثل 'oauth-1.0a' أو 'crypto-js' لتوليده
-        /*
-        async function generatePKCE() {
-            const codeVerifier = generateRandomString();
-            const codeChallenge = await sha256(codeVerifier);
-            return { codeVerifier, codeChallenge };
+        // دالة لاستخراج بيانات المستخدم من الرابط (إذا تم التوجيه مرة أخرى إلى صفحتك)
+        function checkUserData() {
+            const params = new URLSearchParams(window.location.search);
+            const userData = params.get('user');
+            if (userData) {
+                const data = JSON.parse(decodeURIComponent(userData));
+                document.getElementById('userName').textContent = data.name || 'غير متوفر';
+                document.getElementById('userEmail').textContent = data.email || 'غير متوفر';
+                document.getElementById('userPhone').textContent = data.phone || 'غير متوفر';
+                document.getElementById('userData').style.display = 'block';
+            }
         }
-        */
+
+        // عند تحميل الصفحة، تحقق مما إذا كانت هناك بيانات مستخدم
+        window.onload = checkUserData;
     </script>
 </body>
 </html>
