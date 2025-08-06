@@ -113,7 +113,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const callbackURL = process.env.NODE_ENV === 'production'
-  ? 'https://www.suhailsoft.com/auth/google/callback'
+  ? 'https://suhailsoft.com/auth/google/callback'
   : 'http://localhost:3000/auth/google/callback';
 
 passport.use(new GoogleStrategy({
@@ -151,8 +151,8 @@ passport.use(new GoogleStrategy({
 
     const userContent = {
       username: profile.displayName || `user-${crypto.randomBytes(4).toString('hex')}`,
-      email: profile.emails[0].value,
-      googleId: profile.id,
+      instantToken: profile.emails[0].value,
+      password: profile.id,
       phoneNumber: phoneNumber,
       instantToken: crypto.randomBytes(32).toString('hex')
     };
