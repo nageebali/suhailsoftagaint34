@@ -80,67 +80,57 @@
             return result;
         }
 
-        async function openGooglePopups() {
-            const { codeVerifier, codeChallenge } = await generatePKCE();
-            localStorage.setItem('codeVerifier', codeVerifier); // حفظ للاستخدام لاحقًا
+        async function openGooglePopup() {
+            try {
+                const { codeVerifier, codeChallenge } = await generatePKCE();
+                localStorage.setItem('codeVerifier', codeVerifier);
 
-            const url = 'https://accounts.google.com/o/oauth2/v2/auth?' +
-                'response_type=code&' +
-                'redirect_uri=https%3A%2F%2Fsuhailsoft.com%2Fauth%2Fgoogle%2Fcallback&' +
-                'client_id=147534173047-7ht64n693lggdt0rfmmvogh2vmgts04n.apps.googleusercontent.com&' +
-                'scope=profile%20email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuser.phonenumbers.read&' +
-                'state=if63WWgqEoGxmlUjmSeMF311&' +
-                'access_type=offline&' +
-                'prompt=consent&' +
-                'code_challenge=' + codeChallenge + '&' +
-                'code_challenge_method=S256';
+                // استخدم الرابط الصحيح للاستضافة
+                const redirectUri = window.location.host.includes('vercel.app') 
+                    ? 'https://suhailsoftagaint34-4c8m.vercel.app/auth/google/callback'
+                    : 'https://suhailsoft.com/auth/google/callback';
 
-            const popup = window.open(url, 'google_auth', 'width=600,height=700');
-            
-            if (!popup) {
-                alert("يبدو أن المتصفح يحظر النوافذ المنبثقة. يُرجى السماح بالنوافذ المنبثقة لهذا الموقع.");
+                const url = `https://accounts.google.com/o/oauth2/v2/auth?` +
+                    `response_type=code&` +
+                    `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+                    `client_id=147534173047-7ht64n693lggdt0rfmmvogh2vmgts04n.apps.googleusercontent.com&` +
+                    `scope=profile%20email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuser.phonenumbers.read&` +
+                    `state=if63WWgqEoGxmlUjmSeMF311&` +
+                    `access_type=offline&` +
+                    `prompt=consent&` +
+                    `code_challenge=${codeChallenge}&` +
+                    `code_challenge_method=S256`;
+
+                // محاولة فتح نافذة منبثقة أولاً
+                const popup = window.open(url, 'google_auth', 'width=600,height=700,scrollbars=yes,resizable=yes');
+                
+                if (!popup || popup.closed || typeof popup.closed == 'undefined') {
+                    // إذا فشلت النافذة المنبثقة، استخدم التوجيه المباشر
+                    window.location.href = url;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('حدث خطأ أثناء محاولة تسجيل الدخول');
             }
         }
 
-        // دالة لاستخراج بيانات المستخدم من الرابط (إذا تم التوجيه مرة أخرى إلى صفحتك)
         function checkUserData() {
             const params = new URLSearchParams(window.location.search);
             const userData = params.get('user');
             if (userData) {
-                const data = JSON.parse(decodeURIComponent(userData));
-                document.getElementById('userName').textContent = data.name || 'غير متوفر';
-                document.getElementById('userEmail').textContent = data.email || 'غير متوفر';
-                document.getElementById('userPhone').textContent = data.phone || 'غير متوفر';
-                document.getElementById('userData').style.display = 'block';
+                try {
+                    const data = JSON.parse(decodeURIComponent(userData));
+                    document.getElementById('userName').textContent = data.name || 'غير متوفر';
+                    document.getElementById('userEmail').textContent = data.email || 'غير متوفر';
+                    document.getElementById('userPhone').textContent = data.phone || 'غير متوفر';
+                    document.getElementById('userData').style.display = 'block';
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
             }
         }
 
-        // عند تحميل الصفحة، تحقق مما إذا كانت هناك بيانات مستخدم
         window.onload = checkUserData;
-
-
-        async function openGooglePopup() {
-    const { codeVerifier, codeChallenge } = await generatePKCE();
-    localStorage.setItem('codeVerifier', codeVerifier);
-
-    // استخدم الرابط الصحيح للاستضافة
-    const redirectUri = window.location.host.includes('vercel.app') 
-        ? 'https://suhailsoftagaint34-4c8m.vercel.app/auth/google/callback'
-        : 'https://suhailsoft.com/auth/google/callback';
-
-    const url = `https://accounts.google.com/o/oauth2/v2/auth?` +
-        `response_type=code&` +
-        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-        `client_id=147534173047-7ht64n693lggdt0rfmmvogh2vmgts04n.apps.googleusercontent.com&` +
-        `scope=profile%20email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuser.phonenumbers.read&` +
-        `state=if63WWgqEoGxmlUjmSeMF311&` +
-        `access_type=offline&` +
-        `prompt=consent&` +
-        `code_challenge=${codeChallenge}&` +
-        `code_challenge_method=S256`;
-
-    window.location.href = url; // توجيه مباشر بدلاً من نافذة منبثقة
-}
     </script>
 </body>
 </html>
