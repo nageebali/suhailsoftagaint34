@@ -1,36 +1,39 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تم تسجيل الدخول</title>
+    <title>معالجة تسجيل الدخول</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
     <script>
-        // استخراج رمز المصادقة من الرابط
+        // استخراج المعلمات من URL
         const params = new URLSearchParams(window.location.search);
         const code = params.get('code');
         const state = params.get('state');
+        const error = params.get('error');
 
-        if (code) {
-            // إرسال الرمز إلى الخادم الخاص بك لاستبداله بـ Access Token
-            axios.post(`${window.location.origin}/auth/google`, {
+        if (error) {
+            // معالجة الأخطاء
+            console.error('Error from Google:', error);
+            window.location.href = `/login?error=${encodeURIComponent(error)}`;
+        } else if (code) {
+            // إرسال الكود إلى الخادم
+            axios.post('/api/google-auth', {
                 code: code,
                 codeVerifier: localStorage.getItem('codeVerifier'),
                 state: state
             })
             .then(response => {
-                const userData = response.data; // {name, email, phone}
-                // توجيه المستخدم مرة أخرى إلى الصفحة الرئيسية مع بياناته
-                window.location.href = `${window.location.origin}/index.html?user=${encodeURIComponent(JSON.stringify(userData))}`;
+                // تخزين بيانات المستخدم وإعادة التوجيه
+                localStorage.setItem('userData', JSON.stringify(response.data));
+                window.location.href = '/dashboard';
             })
-            .catch(error => {
-                console.error('Error:', error);
-                window.location.href = `${window.location.origin}/index.html?error=auth_failed`;
+            .catch(err => {
+                console.error('Auth Error:', err);
+                window.location.href = '/login?error=auth_failed';
             });
         } else {
-            window.location.href = `${window.location.origin}/dashboard.html`;
+            window.location.href = '/';
         }
     </script>
 </body>
