@@ -41,6 +41,12 @@
 </head>
 <body>
     <div class="container">
+
+
+        <a href="test.html" class="btn" target="_blank" style="flex: 1; min-width: 200px;">
+            <i class="fas fa-download"></i> فحص
+        </a> 
+
         <h1>تسجيل الدخول عبر جوجل</h1>
         <p>انقر على الزر أدناه للانتقال إلى صفحة تسجيل الدخول:</p>
         
@@ -94,10 +100,10 @@
 
                 if (hostname === 'localhost' || hostname === '127.0.0.1') {
                     // إذا كان في البيئة المحلية
-                    redirectUri = 'http://localhost:3000/dashboard.html';
+                    redirectUri = 'http://localhost:3000/auth/google/callback';
                 } else {
                     // إذا كان في بيئة الإنتاج
-                    redirectUri = `https://${hostname}/dashboard.html`;
+                    redirectUri = `https://${hostname}/auth/google/callback`;
                 }
 
                 const url = `https://accounts.google.com/o/oauth2/v2/auth?` +
