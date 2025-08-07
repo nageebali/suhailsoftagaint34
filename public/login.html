@@ -64,7 +64,10 @@
             const data = encoder.encode(randomString);
             const hashBuffer = await crypto.subtle.digest('SHA-256', data);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const codeChallenge = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            const codeChallenge = btoa(String.fromCharCode.apply(null, new Uint8Array(hashBuffer)))
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_')
+                .replace(/=+$/, '');
             return {
                 codeVerifier: randomString,
                 codeChallenge: codeChallenge
@@ -85,26 +88,32 @@
                 const { codeVerifier, codeChallenge } = await generatePKCE();
                 localStorage.setItem('codeVerifier', codeVerifier);
 
-                // استخدم الرابط الصحيح للاستضافة
-                const redirectUri = window.location.host.includes('vercel.app') 
-                    ?  'http://localhost:3000/auth/google/callback':'https://suhailsoft.com/auth/google/callback';
+                // الكشف التلقائي عن النطاق
+                const hostname = window.location.hostname;
+                let redirectUri;
+
+                if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                    // إذا كان في البيئة المحلية
+                    redirectUri = 'http://localhost:3000/auth/google/callback';
+                } else {
+                    // إذا كان في بيئة الإنتاج
+                    redirectUri = `https://${hostname}/auth/google/callback.html`;
+                }
 
                 const url = `https://accounts.google.com/o/oauth2/v2/auth?` +
-    `response_type=code&` +
-    `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-    `client_id=147534173047-7ht64n693lggdt0rfmmvogh2vmgts04n.apps.googleusercontent.com&` +
-    `scope=profile%20email&` + // تمت إزالة user.phonenumbers.read
-    `state=if63WWgqEoGxmlUjmSeMF311&` +
-    `access_type=offline&` +
-    `prompt=consent&` +
-    `code_challenge=${codeChallenge}&` +
-    `code_challenge_method=S256`;
+                    `response_type=code&` +
+                    `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+                    `client_id=147534173047-7ht64n693lggdt0rfmmvogh2vmgts04n.apps.googleusercontent.com&` +
+                    `scope=profile%20email%20https://www.googleapis.com/auth/user.phonenumbers.read&` +
+                    `state=if63WWgqEoGxmlUjmSeMF311&` +
+                    `access_type=offline&` +
+                    `prompt=consent&` +
+                    `code_challenge=${codeChallenge}&` +
+                    `code_challenge_method=S256`;
 
-                // محاولة فتح نافذة منبثقة أولاً
                 const popup = window.open(url, 'google_auth', 'width=600,height=700,scrollbars=yes,resizable=yes');
                 
                 if (!popup || popup.closed || typeof popup.closed == 'undefined') {
-                    // إذا فشلت النافذة المنبثقة، استخدم التوجيه المباشر
                     window.location.href = url;
                 }
             } catch (error) {
