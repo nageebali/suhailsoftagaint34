@@ -94,10 +94,10 @@
 
                 if (hostname === 'localhost' || hostname === '127.0.0.1') {
                     // إذا كان في البيئة المحلية
-                    redirectUri = 'http://localhost:3000/auth/google/callback';
+                    redirectUri = 'http://localhost:3000/dashboard.html';
                 } else {
                     // إذا كان في بيئة الإنتاج
-                    redirectUri = `https://${hostname}/auth/google/callback.html`;
+                    redirectUri = `https://${hostname}/dashboard.html`;
                 }
 
                 const url = `https://accounts.google.com/o/oauth2/v2/auth?` +
