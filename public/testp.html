@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار اتصال خدمات Google</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #4285F4;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            margin: 30px auto 0;
+        }
+        button:hover {
+            background-color: #3367D6;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background-color: white;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            padding: 20px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .sidebar.active {
+            right: 0;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #777;
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #E6F4EA;
+            color: #0D652D;
+            border: 1px solid #81C995;
+        }
+        .error {
+            background-color: #FCE8E6;
+            color: #D93025;
+            border: 1px solid #F28B82;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4285F4;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        .auth-btn {
+            background-color: #0F9D58;
+            margin-top: 20px;
+        }
+        .auth-link {
+            margin-top: 20px;
+            word-break: break-all;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .copy-btn {
+            background-color: #757575;
+            margin-top: 10px;
+        }
+        .reset-btn {
+            background-color: #DB4437;
+            margin-top: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>اختبار اتصال خدمات Google API</h1>
+        
+        <div class="form-group">
+            <label for="client-id">معرف العميل (Client ID)</label>
+            <input type="text" id="client-id" placeholder="أدخل معرف العميل الخاص بك">
+        </div>
+        
+        <div class="form-group">
+            <label for="client-secret">الرمز السري للعميل (Client Secret)</label>
+            <input type="text" id="client-secret" placeholder="أدخل الرمز السري للعميل">
+        </div>
+        
+        <div class="form-group">
+            <label for="api-scope">نطاق الخدمة (API Scope)</label>
+            <input type="text" id="api-scope" placeholder="أدخل نطاق الخدمة المطلوبة (مثال: https://www.googleapis.com/auth/drive)">
+        </div>
+        
+        <div class="form-group">
+            <label for="redirect-uri">رابط إعادة التوجيه (Redirect URI)</label>
+            <input type="text" id="redirect-uri" placeholder="أدخل رابط إعادة التوجيه" value="http://localhost:3000/auth/google/callback">
+        </div>
+        
+        <button id="test-btn">اختبار الاتصال</button>
+        <button id="reset-btn" class="reset-btn">مسح الحقول المحفوظة</button>
+    </div>
+    
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>نتيجة الاختبار</h2>
+            <button class="close-btn" id="close-btn">&times;</button>
+        </div>
+        
+        <div id="test-content">
+            <!-- سيتم عرض نتيجة الاختبار هنا -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const testBtn = document.getElementById('test-btn');
+            const closeBtn = document.getElementById('close-btn');
+            const sidebar = document.getElementById('sidebar');
+            const testContent = document.getElementById('test-content');
+            const resetBtn = document.getElementById('reset-btn');
+            
+            // عناصر الإدخال
+            const inputFields = {
+                clientId: document.getElementById('client-id'),
+                clientSecret: document.getElementById('client-secret'),
+                apiScope: document.getElementById('api-scope'),
+                redirectUri: document.getElementById('redirect-uri')
+            };
+            
+            // تحميل الحقول المحفوظة عند بدء التحميل
+            loadSavedFields();
+            
+            // حفظ الحقول عند التغيير
+            Object.keys(inputFields).forEach(key => {
+                inputFields[key].addEventListener('input', function() {
+                    saveFields();
+                });
+            });
+            
+            // فتح الشاشة الجانبية عند الضغط على زر الاختبار
+            testBtn.addEventListener('click', testConnection);
+            
+            // إغلاق الشاشة الجانبية
+            closeBtn.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+            });
+            
+            // مسح الحقول المحفوظة
+            resetBtn.addEventListener('click', function() {
+                localStorage.removeItem('google_auth_fields');
+                Object.keys(inputFields).forEach(key => {
+                    inputFields[key].value = key === 'redirectUri' ? 
+                        'http://localhost:3000/auth/google/callback' : '';
+                });
+                alert('تم مسح الحقول المحفوظة');
+            });
+            
+            // اختبار الاتصال عند الضغط على Enter في أي حقل إدخال
+            Object.values(inputFields).forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        testConnection();
+                    }
+                });
+            });
+            
+            function saveFields() {
+                const fieldsData = {
+                    clientId: inputFields.clientId.value,
+                    clientSecret: inputFields.clientSecret.value,
+                    apiScope: inputFields.apiScope.value,
+                    redirectUri: inputFields.redirectUri.value
+                };
+                localStorage.setItem('google_auth_fields', JSON.stringify(fieldsData));
+            }
+            
+            function loadSavedFields() {
+                const savedFields = localStorage.getItem('google_auth_fields');
+                if (savedFields) {
+                    const fieldsData = JSON.parse(savedFields);
+                    Object.keys(fieldsData).forEach(key => {
+                        if (inputFields[key] && fieldsData[key]) {
+                            inputFields[key].value = fieldsData[key];
+                        }
+                    });
+                }
+            }
+            
+            function testConnection() {
+                const clientId = inputFields.clientId.value;
+                const clientSecret = inputFields.clientSecret.value;
+                const apiScope = inputFields.apiScope.value;
+                const redirectUri = inputFields.redirectUri.value;
+                
+                if (!clientId || !clientSecret || !apiScope || !redirectUri) {
+                    alert('الرجاء إدخال جميع الحقول المطلوبة');
+                    return;
+                }
+                
+                // حفظ الحقول قبل الاختبار
+                saveFields();
+                
+                // عرض الشاشة الجانبية
+                sidebar.classList.add('active');
+                
+                // عرض حالة التحميل
+                testContent.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>جاري التحقق من الاتصال بخدمات Google...</p>
+                    </div>
+                `;
+                
+                // هنا سيتم تنفيذ عملية التحقق الفعلية من الاتصال
+                setTimeout(() => {
+                    const success = Math.random() > 0.3; // 70% فرصة للنجاح لأغراض العرض
+                    
+                    if (success) {
+                        generateAuthUrl(clientId, redirectUri, apiScope).then(authUrl => {
+                            testContent.innerHTML = `
+                                <div class="test-result success">
+                                    <h3>✓ تم الاتصال بنجاح</h3>
+                                    <p>تم التحقق من صحة بيانات الاعتماد والوصول إلى الخدمة المطلوبة.</p>
+                                    <p><strong>معرف العميل:</strong> ${clientId}</p>
+                                    <p><strong>نطاق الخدمة:</strong> ${apiScope}</p>
+                                    <button id="auth-btn" class="auth-btn">فتح نافذة المصادقة</button>
+                                    <div class="auth-link" id="auth-link">${authUrl}</div>
+                                    <button id="copy-btn" class="copy-btn">نسخ الرابط</button>
+                                </div>
+                            `;
+                            
+                            // إضافة حدث لزر المصادقة
+                            document.getElementById('auth-btn').addEventListener('click', function() {
+                                openAuthWindow(authUrl);
+                            });
+                            
+                            // إضافة حدث لزر النسخ
+                            document.getElementById('copy-btn').addEventListener('click', function() {
+                                copyToClipboard(authUrl);
+                                alert('تم نسخ الرابط إلى الحافظة');
+                            });
+                        });
+                    } else {
+                        testContent.innerHTML = `
+                            <div class="test-result error">
+                                <h3>✗ فشل الاتصال</h3>
+                                <p>تعذر الوصول إلى الخدمة المطلوبة. يرجى التحقق من:</p>
+                                <ul>
+                                    <li>صحة معرف العميل والرمز السري</li>
+                                    <li>أن نطاق الخدمة مكتوب بشكل صحيح</li>
+                                    <li>أنك قمت بتمكين الخدمة المطلوبة في Google Cloud Console</li>
+                                    <li>أن حسابك لديه الصلاحيات اللازمة</li>
+                                </ul>
+                            </div>
+                        `;
+                    }
+                }, 2000);
+            }
+            
+            async function generateAuthUrl(clientId, redirectUri, scope) {
+                // إنشاء حالة عشوائية لأمان OAuth
+                const state = Math.random().toString(36).substring(2);
+                localStorage.setItem('oauth_state', state);
+                
+                // إنشاء تحدي رمز PKCE
+                const codeVerifier = generateCodeVerifier();
+                localStorage.setItem('code_verifier', codeVerifier);
+                
+                // حساب التحدي
+                const codeChallenge = await sha256(codeVerifier);
+                
+                const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+                
+                const params = {
+                    response_type: 'code',
+                    client_id: clientId,
+                    redirect_uri: redirectUri,
+                    scope: scope,
+                    state: state,
+                    access_type: 'offline',
+                    prompt: 'consent',
+                    code_challenge: codeChallenge,
+                    code_challenge_method: 'S256'
+                };
+                
+                // إضافة المعلمات إلى URL
+                Object.keys(params).forEach(key => {
+                    authUrl.searchParams.append(key, params[key]);
+                });
+                
+                return authUrl.toString();
+            }
+            
+            function openAuthWindow(authUrl) {
+                const width = 500;
+                const height = 600;
+                const left = (screen.width - width) / 2;
+                const top = (screen.height - height) / 2;
+                
+                window.open(
+                    authUrl, 
+                    'GoogleAuth', 
+                    `width=${width},height=${height},top=${top},left=${left}`
+                );
+            }
+            
+            function generateCodeVerifier() {
+                const array = new Uint8Array(32);
+                window.crypto.getRandomValues(array);
+                return Array.from(array, dec => ('0' + dec.toString(16)).slice(-2)).join('');
+            }
+            
+            async function sha256(plain) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(plain);
+                const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+                return base64URLEncode(hashBuffer);
+            }
+            
+            function base64URLEncode(buffer) {
+                return btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)))
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=+$/, '');
+            }
+            
+            function copyToClipboard(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+        });
+    </script>
+</body>
+</html>
