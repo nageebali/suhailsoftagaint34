@@ -3,149 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>    <!-- filepath: /D:/websitesuhail/public/login.html -->
-    <a href="/auth/google" class="google-btn">
-                const callbackURL = process.env.NODE_ENV === 'production'
-            ? 'https://www.suhailsoft.com/auth/google/callback'
-            : 'http://localhost:3000/auth/google/callback';</title>
+    <title>تسجيل الدخول - SuhailSoft</title>
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
-            background-color: #f5f5f5;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
+        .login-container {
             background: white;
-            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
-        button {
-            background-color: #4285F4;
+        .logo {
+            width: 80px;
+            margin-bottom: 1.5rem;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 2rem;
+        }
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #4285F4;
             color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 12px 24px;
             border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 1rem 0;
         }
-        button:hover {
-            background-color: #3367D6;
+        .google-btn:hover {
+            background: #3367d6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        #userData {
-            margin-top: 20px;
-            text-align: right;
+        .google-btn img {
+            width: 20px;
+            margin-left: 10px;
+        }
+        .divider {
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        .divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+        .divider span {
+            background: white;
+            padding: 0 10px;
+            position: relative;
+            z-index: 2;
+            color: #7f8c8d;
+        }
+        .footer {
+            margin-top: 2rem;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        .error-message {
+            color: #e74c3c;
+            margin-bottom: 1rem;
             display: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-
-
-        <a href="testp.html" >
-          فحص
-          <p>فحص الدخول:</p>
-        </a> 
-
-        <h1>تسجيل الدخول عبر جوجل</h1>
-        <p>انقر على الزر أدناه للانتقال إلى صفحة تسجيل الدخول:</p>
+    <div class="login-container">
+        <img src="/images/logo.png" alt="شعار SuhailSoft" class="logo">
+        <h1>تسجيل الدخول إلى حسابك</h1>
         
-        <button onclick="openGooglePopup()">
-            تسجيل الدخول بجوجل
-        </button>
-
-        <div id="userData">
-            <h2>بيانات المستخدم:</h2>
-            <p><strong>الاسم:</strong> <span id="userName"></span></p>
-            <p><strong>البريد الإلكتروني:</strong> <span id="userEmail"></span></p>
-            <p><strong>رقم الهاتف:</strong> <span id="userPhone"></span></p>
+        <!-- رسالة الخطأ -->
+        <div class="error-message" id="errorMessage"></div>
+        
+        <!-- زر تسجيل الدخول عبر جوجل -->
+        <a href="/auth/google" class="google-btn">
+            <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Logo">
+            تسجيل الدخول باستخدام Google
+        </a>
+        
+        <div class="divider">
+            <span>أو</span>
+        </div>
+        
+        <!-- نموذج تسجيل الدخول العادي (اختياري) -->
+        <form id="loginForm" style="display: none;">
+            <input type="email" placeholder="البريد الإلكتروني" required>
+            <input type="password" placeholder="كلمة المرور" required>
+            <button type="submit">تسجيل الدخول</button>
+        </form>
+        
+        <div class="footer">
+            بالاستمرار، أنت توافق على <a href="/terms">الشروط والأحكام</a> و<a href="/privacy">سياسة الخصوصية</a>
         </div>
     </div>
 
     <script>
-        // توليد PKCE (Proof Key for Code Exchange)
-        async function generatePKCE() {
-            const randomString = generateRandomString(128);
-            const encoder = new TextEncoder();
-            const data = encoder.encode(randomString);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const codeChallenge = btoa(String.fromCharCode.apply(null, new Uint8Array(hashBuffer)))
-                .replace(/\+/g, '-')
-                .replace(/\//g, '_')
-                .replace(/=+$/, '');
-            return {
-                codeVerifier: randomString,
-                codeChallenge: codeChallenge
-            };
+        // عرض رسائل الخطأ من السيرفر
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        const errorMessage = document.getElementById('errorMessage');
+        
+        if (error) {
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = decodeURIComponent(error);
         }
-
-        function generateRandomString(length) {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
-            let result = '';
-            for (let i = 0; i < length; i++) {
-                result += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return result;
-        }
-
-        async function openGooglePopup() {
-            try {
-                const { codeVerifier, codeChallenge } = await generatePKCE();
-                localStorage.setItem('codeVerifier', codeVerifier);
-
-                // الكشف التلقائي عن النطاق
-                const hostname = window.location.hostname;
-                let redirectUri;
-
-                if (hostname === 'localhost' || hostname === '127.0.0.1') {
-                    // إذا كان في البيئة المحلية
-                    redirectUri = 'http://localhost:3000/auth/google/callback';
-                } else {
-                    // إذا كان في بيئة الإنتاج
-                    redirectUri = `https://${hostname}/auth/google/callback`;
-                }
-
-                const url  = `https://accounts.google.com/o/oauth2/v2/auth?` +
-                       `response_type=code&` +
-                       `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-                        `client_id=YOUR_CLIENT_ID&` +
-                     `scope=profile%20email&` +
-                    `access_type=offline&` +
-  `prompt=consent`;
-                const popup = window.open(url, 'google_auth', 'width=600,height=700,scrollbars=yes,resizable=yes');
-                
-                if (!popup || popup.closed || typeof popup.closed == 'undefined') {
-                    window.location.href = url;
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('حدث خطأ أثناء محاولة تسجيل الدخول');
-            }
-        }
-
-        function checkUserData() {
-            const params = new URLSearchParams(window.location.search);
-            const userData = params.get('user');
-            if (userData) {
-                try {
-                    const data = JSON.parse(decodeURIComponent(userData));
-                    document.getElementById('userName').textContent = data.name || 'غير متوفر';
-                    document.getElementById('userEmail').textContent = data.email || 'غير متوفر';
-                    document.getElementById('userPhone').textContent = data.phone || 'غير متوفر';
-                    document.getElementById('userData').style.display = 'block';
-                } catch (e) {
-                    console.error('Error parsing user data:', e);
-                }
-            }
-        }
-
-        window.onload = checkUserData;
+        
+        // يمكنك إضافة المزيد من الوظائف هنا
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // إضافة منطق تسجيل الدخول هنا
+        });
     </script>
 </body>
 </html>
