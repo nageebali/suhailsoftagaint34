@@ -107,17 +107,13 @@
                     redirectUri = `https://${hostname}/auth/google/callback`;
                 }
 
-                const url = `https://accounts.google.com/o/oauth2/v2/auth?` +
-                    `response_type=code&` +
-                    `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-                    `client_id=147534173047-7ht64n693lggdt0rfmmvogh2vmgts04n.apps.googleusercontent.com&` +
-                    `scope=profile%20email%20https://www.googleapis.com/auth/user.phonenumbers.read&` +
-                    `state=if63WWgqEoGxmlUjmSeMF311&` +
-                    `access_type=offline&` +
-                    `prompt=consent&` +
-                    `code_challenge=${codeChallenge}&` +
-                    `code_challenge_method=S256`;
-
+                const url  = `https://accounts.google.com/o/oauth2/v2/auth?` +
+  `response_type=code&` +
+  `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+  `client_id=YOUR_CLIENT_ID&` +
+  `scope=profile%20email&` +
+  `access_type=offline&` +
+  `prompt=consent`;
                 const popup = window.open(url, 'google_auth', 'width=600,height=700,scrollbars=yes,resizable=yes');
                 
                 if (!popup || popup.closed || typeof popup.closed == 'undefined') {

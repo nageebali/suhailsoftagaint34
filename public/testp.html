@@ -145,7 +145,7 @@
         
         <div class="form-group">
             <label for="client-id">معرف العميل (Client ID)</label>
-            <input type="text" id="client-id" placeholder="أدخل معرف العميل الخاص بك">
+            <input type="text" id="client-id" placeholder="أدخل معرف العميل الخاص بك" value="231158847223-pmfivjmv664vkk35hkeqam3uf32igjm1.apps.googleusercontent.com">
         </div>
         
         <div class="form-group">
@@ -155,12 +155,12 @@
         
         <div class="form-group">
             <label for="api-scope">نطاق الخدمة (API Scope)</label>
-            <input type="text" id="api-scope" placeholder="أدخل نطاق الخدمة المطلوبة (مثال: https://www.googleapis.com/auth/drive)">
+            <input type="text" id="api-scope" placeholder="أدخل نطاق الخدمة المطلوبة" value="https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/calendar.readonly">
         </div>
         
         <div class="form-group">
             <label for="redirect-uri">رابط إعادة التوجيه (Redirect URI)</label>
-            <input type="text" id="redirect-uri" placeholder="أدخل رابط إعادة التوجيه" value="http://localhost:3000/auth/google/callback">
+            <input type="text" id="redirect-uri" placeholder="أدخل رابط إعادة التوجيه" value="https://www.suhailsoft.com/auth/google/callback">
         </div>
         
         <button id="test-btn">اختبار الاتصال</button>
@@ -215,10 +215,10 @@
             // مسح الحقول المحفوظة
             resetBtn.addEventListener('click', function() {
                 localStorage.removeItem('google_auth_fields');
-                Object.keys(inputFields).forEach(key => {
-                    inputFields[key].value = key === 'redirectUri' ? 
-                        'http://localhost:3000/auth/google/callback' : '';
-                });
+                inputFields.clientId.value = '231158847223-pmfivjmv664vkk35hkeqam3uf32igjm1.apps.googleusercontent.com';
+                inputFields.clientSecret.value = '';
+                inputFields.apiScope.value = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/calendar.readonly';
+                inputFields.redirectUri.value = 'https://www.suhailsoft.com/auth/google/callback';
                 alert('تم مسح الحقول المحفوظة');
             });
             
@@ -280,7 +280,7 @@
                 
                 // هنا سيتم تنفيذ عملية التحقق الفعلية من الاتصال
                 setTimeout(() => {
-                    const success = Math.random() > 0.3; // 70% فرصة للنجاح لأغراض العرض
+                    const success = true; // نجاح مؤكد لإظهار الرابط المطلوب
                     
                     if (success) {
                         generateAuthUrl(clientId, redirectUri, apiScope).then(authUrl => {
@@ -290,16 +290,11 @@
                                     <p>تم التحقق من صحة بيانات الاعتماد والوصول إلى الخدمة المطلوبة.</p>
                                     <p><strong>معرف العميل:</strong> ${clientId}</p>
                                     <p><strong>نطاق الخدمة:</strong> ${apiScope}</p>
-                                    <button id="auth-btn" class="auth-btn">فتح نافذة المصادقة</button>
+                                    <a href="${authUrl}" target="_blank" class="auth-btn" style="display: block; text-align: center; text-decoration: none; color: white; padding: 12px 20px; border-radius: 4px; background-color: #0F9D58; margin-top: 20px;">تسجيل الدخول عبر Google</a>
                                     <div class="auth-link" id="auth-link">${authUrl}</div>
                                     <button id="copy-btn" class="copy-btn">نسخ الرابط</button>
                                 </div>
                             `;
-                            
-                            // إضافة حدث لزر المصادقة
-                            document.getElementById('auth-btn').addEventListener('click', function() {
-                                openAuthWindow(authUrl);
-                            });
                             
                             // إضافة حدث لزر النسخ
                             document.getElementById('copy-btn').addEventListener('click', function() {
@@ -326,15 +321,15 @@
             
             async function generateAuthUrl(clientId, redirectUri, scope) {
                 // إنشاء حالة عشوائية لأمان OAuth
-                const state = Math.random().toString(36).substring(2);
+                const state = '8n83hssjxe7';
                 localStorage.setItem('oauth_state', state);
                 
                 // إنشاء تحدي رمز PKCE
-                const codeVerifier = generateCodeVerifier();
+                const codeVerifier = '1IffftEs1Xi2FeA55mBVQtHJ0a6XM1dx6AKc-8WLRQs';
                 localStorage.setItem('code_verifier', codeVerifier);
                 
                 // حساب التحدي
-                const codeChallenge = await sha256(codeVerifier);
+                const codeChallenge = '1IffftEs1Xi2FeA55mBVQtHJ0a6XM1dx6AKc-8WLRQs';
                 
                 const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
                 
@@ -356,39 +351,6 @@
                 });
                 
                 return authUrl.toString();
-            }
-            
-            function openAuthWindow(authUrl) {
-                const width = 500;
-                const height = 600;
-                const left = (screen.width - width) / 2;
-                const top = (screen.height - height) / 2;
-                
-                window.open(
-                    authUrl, 
-                    'GoogleAuth', 
-                    `width=${width},height=${height},top=${top},left=${left}`
-                );
-            }
-            
-            function generateCodeVerifier() {
-                const array = new Uint8Array(32);
-                window.crypto.getRandomValues(array);
-                return Array.from(array, dec => ('0' + dec.toString(16)).slice(-2)).join('');
-            }
-            
-            async function sha256(plain) {
-                const encoder = new TextEncoder();
-                const data = encoder.encode(plain);
-                const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
-                return base64URLEncode(hashBuffer);
-            }
-            
-            function base64URLEncode(buffer) {
-                return btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)))
-                    .replace(/\+/g, '-')
-                    .replace(/\//g, '_')
-                    .replace(/=+$/, '');
             }
             
             function copyToClipboard(text) {
