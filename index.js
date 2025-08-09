@@ -11,20 +11,22 @@ const { v4: uuidv4 } = require('uuid');
 const crypto = require('crypto');
 const flash = require('connect-flash');
 const axios = require('axios');
-const querystring = require('querystring');
 const { saveNewUser } = require('./supabaseService');
 
-// تحقق من وجود القيم الضرورية
-if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-  throw new Error('يرجى ضبط GOOGLE_CLIENT_ID و GOOGLE_CLIENT_SECRET في ملف .env');
-}
+// Validate required environment variables
+const requiredEnvVars = ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'SESSION_SECRET'];
+requiredEnvVars.forEach(varName => {
+  if (!process.env[varName]) {
+    throw new Error(`Missing required environment variable: ${varName}`);
+  }
+});
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// نظام التسجيل (Logging)
+// Enhanced logging configuration
 const logger = winston.createLogger({
-  level: 'info',
+  level: process.env.LOG_LEVEL || 'info',
   format: winston.format.combine(
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     winston.format.errors({ stack: true }),
@@ -32,66 +34,104 @@ const logger = winston.createLogger({
     winston.format.json()
   ),
   transports: [
-    new winston.transports.Console({ format: winston.format.combine(winston.format.colorize(), winston.format.simple()) }),
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error', maxsize: 5 * 1024 * 1024 }),
-    new winston.transports.File({ filename: 'logs/combined.log', maxsize: 10 * 1024 * 1024 })
+    new winston.transports.Console({ 
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+      ) 
+    }),
+    new winston.transports.File({ 
+      filename: 'logs/error.log', 
+      level: 'error', 
+      maxsize: 5 * 1024 * 1024 
+    }),
+    new winston.transports.File({ 
+      filename: 'logs/combined.log', 
+      maxsize: 10 * 1024 * 1024 
+    })
   ]
 });
 
-let userContent;
-
-// الحماية
+// Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://apis.google.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://apis.google.com", "https://cdn.socket.io"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       imgSrc: ["'self'", "data:", "https://lh3.googleusercontent.com"],
-      connectSrc: ["'self'", "https://suhailsoft.com", "http://localhost:3000"],
+      connectSrc: ["'self'", "https://www.suhailsoft.com", "http://localhost:3000", "https://oauth2.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      objectSrc: ["'none'"]
+      objectSrc: ["'none'"],
+      frameSrc: ["'self'", "https://accounts.google.com"]
     }
   }
 }));
 
-app.use(rateLimit({
-  windowMs: 15 * 60 * 1000,
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
   handler: (req, res) => {
-    logger.warn(`تم تجاوز حد الطلبات من IP: ${req.ip}`);
-    res.status(429).json({ error: 'لقد تجاوزت عدد الطلبات المسموح بها، يرجى المحاولة لاحقاً' });
+    logger.warn(`Rate limit exceeded for IP: ${req.ip}`);
+    res.status(429).json({ 
+      error: 'Too many requests, please try again later' 
+    });
+  }
+});
+
+app.use(limiter);
+
+// Static files and middleware
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-store');
+    } else {
+      res.setHeader('Cache-Control', 'public, max-age=31536000');
+    }
   }
 }));
 
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(flash());
 
-app.use(session({
-  secret: process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex'),
+// Session configuration
+const sessionConfig = {
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   name: 'secureSession',
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
     sameSite: 'lax',
     domain: process.env.NODE_ENV === 'production' ? '.suhailsoft.com' : undefined
-  }
-}));
+  },
+  store: process.env.NODE_ENV === 'production' ? 
+    new (require('connect-pg-simple')(session))({
+      conString: process.env.DATABASE_URL
+    }) : undefined
+};
 
+app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
 
-const callbackURL = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/auth/google/callback';
+// Google OAuth Strategy
+const callbackURL = process.env.NODE_ENV === 'production' ?
+  'https://www.suhailsoft.com/auth/google/callback' :
+  'http://localhost:3000/auth/google/callback';
 
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: callbackURL,
-  scope: ['profile', 'email', 'https://www.googleapis.com/auth/user.phonenumbers.read'],
+  scope: ['profile', 'email'],
   state: true,
   passReqToCallback: true,
   accessType: 'offline',
@@ -99,35 +139,21 @@ passport.use(new GoogleStrategy({
 }, async (req, accessToken, refreshToken, profile, done) => {
   try {
     if (!profile.emails?.[0]?.value) {
-      throw new Error('البريد الإلكتروني مطلوب');
+      throw new Error('Email is required');
     }
 
-    let phoneNumber = 'غير متوفر';
-    try {
-      const phoneResponse = await axios.get(
-        'https://people.googleapis.com/v1/people/me?personFields=phoneNumbers',
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      );
-      if (phoneResponse.data.phoneNumbers?.length > 0) {
-        phoneNumber = phoneResponse.data.phoneNumbers[0].value;
-      }
-    } catch (phoneError) {
-      logger.error(`خطأ في جلب رقم الهاتف: ${phoneError.message}`);
-    }
-
-    userContent = {
+    const userData = {
       username: profile.displayName || `user-${crypto.randomBytes(4).toString('hex')}`,
       email: profile.emails[0].value,
-      password: profile.id,
-      phoneNumber: phoneNumber,
+      googleId: profile.id,
       instantToken: crypto.randomBytes(32).toString('hex')
     };
 
-    await saveNewUser(userContent);
-    logger.info(`تم تسجيل مستخدم جديد: ${userContent.email}`);
-    return done(null, userContent);
+    await saveNewUser(userData);
+    logger.info(`New user registered: ${userData.email}`);
+    return done(null, userData);
   } catch (error) {
-    logger.error(`خطأ في حفظ المستخدم: ${error.message}`, {
+    logger.error(`Error saving user: ${error.message}`, {
       stack: error.stack,
       profileId: profile.id
     });
@@ -135,84 +161,141 @@ passport.use(new GoogleStrategy({
   }
 }));
 
+// Serialization
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
+// Routes
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
-app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
 
-app.get('/dashboard', (req, res) => {
-  if (!req.isAuthenticated()) {
-    logger.warn(`محاولة وصول غير مصرح بها إلى /dashboard من IP: ${req.ip}`);
-    req.flash('error', 'يجب تسجيل الدخول أولاً');
-    return res.redirect('/login');
+app.get('/login', (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.redirect('/dashboard');
   }
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+app.get('/dashboard', ensureAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
 
-app.get('/api/user', (req, res) => {
-  if (!req.isAuthenticated()) return res.status(401).json({ error: 'غير مصرح به' });
+app.get('/api/user', ensureAuthenticated, (req, res) => {
   res.json({
     name: req.user.username,
     email: req.user.email,
-    phone: req.user.phoneNumber
+    googleId: req.user.googleId
   });
 });
 
+// Auth routes
 app.get('/auth/google',
-  passport.authenticate('google', {
-    scope: ['profile', 'email', 'https://www.googleapis.com/auth/user.phonenumbers.read'],
-    prompt: 'select_account',
-    accessType: 'offline'
-  })
-);
+  (req, res, next) => {
+    // Generate PKCE code verifier and challenge
+    const codeVerifier = crypto.randomBytes(64).toString('hex');
+    const codeChallenge = crypto
+      .createHash('sha256')
+      .update(codeVerifier)
+      .digest('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
 
-app.get('/auth/google/callback',
-  passport.authenticate('google', {
-    failureRedirect: '/login',
-    failureFlash: 'فشل تسجيل الدخول باستخدام جوجل'
-  }),
-  (req, res) => {
-    logger.info(`تم تسجيل الدخول بنجاح للمستخدم: ${req.user?.email}`);
-    res.redirect('/dashboard');
+    // Store code verifier in session
+    req.session.codeVerifier = codeVerifier;
+    
+    // Add PKCE parameters to the authorization request
+    req.session.state = crypto.randomBytes(32).toString('hex');
+    
+    passport.authenticate('google', {
+      scope: ['profile', 'email'],
+      prompt: 'select_account',
+      accessType: 'offline',
+      state: req.session.state,
+      codeChallengeMethod: 'S256',
+      codeChallenge: codeChallenge
+    })(req, res, next);
   }
 );
 
-app.post('/auth/google', (req, res) => {
-  res.json(userContent);
-});
+app.get('/auth/google/callback',
+  (req, res, next) => {
+    passport.authenticate('google', {
+      failureRedirect: '/login',
+      failureFlash: 'Failed to authenticate with Google',
+      session: true
+    }, (err, user, info) => {
+      if (err) {
+        logger.error(`Authentication error: ${err.message}`);
+        return next(err);
+      }
+      if (!user) {
+        req.flash('error', info.message || 'Authentication failed');
+        return res.redirect('/login');
+      }
+      
+      req.logIn(user, (err) => {
+        if (err) {
+          logger.error(`Login error: ${err.message}`);
+          return next(err);
+        }
+        logger.info(`User logged in: ${user.email}`);
+        return res.redirect('/dashboard');
+      });
+    })(req, res, next);
+  }
+);
 
 app.get('/logout', (req, res) => {
-  const userEmail = req.user?.email || 'غير معروف';
+  const userEmail = req.user?.email || 'unknown';
   req.logout((err) => {
     if (err) {
-      logger.error(`خطأ في تسجيل الخروج: ${err.message}`, { stack: err.stack, userEmail });
+      logger.error(`Logout error: ${err.message}`, { stack: err.stack });
       return res.redirect('/');
     }
-
+    
     req.session.destroy((err) => {
       if (err) {
-        logger.error(`خطأ في تدمير الجلسة: ${err.message}`, { stack: err.stack, userEmail });
-      } else {
-        logger.info(`تم تسجيل خروج المستخدم: ${userEmail}`);
+        logger.error(`Session destruction error: ${err.message}`);
       }
       res.clearCookie('secureSession');
+      logger.info(`User logged out: ${userEmail}`);
       res.redirect('/');
     });
   });
 });
 
+// Verification file for Google
 app.get('/google74f1db194f961b81.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'google74f1db194f961b81.html'));
 });
 
-app.use((req, res, next) => {
-  const error = new Error('الصفحة غير موجودة');
-  error.status = 404;
-  logger.warn(`404 - ${req.method} ${req.path}`);
-  next(error);
+// API endpoint for frontend to get redirect URI
+app.get('/api/redirect-uri', (req, res) => {
+  res.json({ 
+    redirectUri: callbackURL 
+  });
 });
 
+// Serve PWA files
+app.get('/manifest.json', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'manifest.json'));
+});
+
+app.get('/service-worker.js', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'service-worker.js'));
+});
+
+// Serve Socket.IO client
+app.get('/socket.io/socket.io.js', (req, res) => {
+  res.redirect('https://cdn.socket.io/4.5.4/socket.io.min.js');
+});
+
+// 404 handler
+app.use((req, res, next) => {
+  res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+});
+
+// Error handler
 app.use((err, req, res, next) => {
   const statusCode = err.status || 500;
   logger.error(`${statusCode} - ${err.message}`, {
@@ -220,29 +303,40 @@ app.use((err, req, res, next) => {
     path: req.path,
     method: req.method,
     ip: req.ip,
-    user: req.user?.id || 'غير مسجل'
+    user: req.user?.email || 'guest'
   });
 
   if (req.accepts('html')) {
-    res.status(statusCode).sendFile(path.join(__dirname, 'public', statusCode === 404 ? '404.html' : '500.html'));
+    res.status(statusCode).sendFile(path.join(__dirname, 'public', 'error.html'));
   } else {
     res.status(statusCode).json({
-      error: statusCode === 500 ? 'خطأ في الخادم' : err.message,
-      requestId: req.id
+      error: statusCode === 500 ? 'Server error' : err.message,
+      status: statusCode
     });
   }
 });
 
+// Helper middleware
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) return next();
+  
+  logger.warn(`Unauthorized access attempt to ${req.path} from IP: ${req.ip}`);
+  req.flash('error', 'Please login first');
+  res.redirect('/login');
+}
+
+// Process handlers
 process.on('uncaughtException', (error) => {
-  logger.error(`خطأ غير معالج: ${error.message}`, { stack: error.stack });
+  logger.error(`Uncaught Exception: ${error.message}`, { stack: error.stack });
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  logger.error(`وعد غير معالج: ${reason}`, { stack: reason.stack });
+  logger.error(`Unhandled Rejection at: ${promise}`, { reason: reason.stack });
 });
 
+// Start server
 app.listen(PORT, () => {
-  logger.info(`الخادم يعمل على البيئة ${process.env.NODE_ENV || 'development'}`);
-  logger.info(`http://localhost:${PORT}`);
+  logger.info(`Server running in ${process.env.NODE_ENV || 'development'} mode`);
+  logger.info(`Listening on port ${PORT}`);
 });
