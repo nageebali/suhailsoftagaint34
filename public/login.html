@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل الدخول عبر جوجل</title>
+    <title>    <!-- filepath: /D:/websitesuhail/public/login.html -->
+    <a href="/auth/google" class="google-btn">
+                const callbackURL = process.env.NODE_ENV === 'production'
+            ? 'https://suhailsoft.com/auth/google/callback'
+            : 'http://localhost:3000/auth/google/callback';</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -108,11 +112,11 @@
                 }
 
                 const url  = `https://accounts.google.com/o/oauth2/v2/auth?` +
-  `response_type=code&` +
-  `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-  `client_id=YOUR_CLIENT_ID&` +
-  `scope=profile%20email&` +
-  `access_type=offline&` +
+                       `response_type=code&` +
+                       `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+                        `client_id=YOUR_CLIENT_ID&` +
+                     `scope=profile%20email&` +
+                    `access_type=offline&` +
   `prompt=consent`;
                 const popup = window.open(url, 'google_auth', 'width=600,height=700,scrollbars=yes,resizable=yes');
                 
