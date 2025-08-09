@@ -88,6 +88,29 @@
             margin-bottom: 1rem;
             display: none;
         }
+            .facebook-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #1877F2;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 4px;
+                text-decoration: none;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                margin: 1rem 0;
+            }
+            .facebook-btn:hover {
+                background: #145dbf;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            .facebook-btn img {
+                width: 20px;
+                margin-left: 10px;
+            }
+      
     </style>
 </head>
 <body>
@@ -103,6 +126,10 @@
             <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google Logo">
             تسجيل الدخول باستخدام Google
         </a>
+                <a href="/auth/facebook" class="facebook-btn">
+            <img src="https://img.icons8.com/color/48/000000/facebook-new.png" alt="Facebook Logo">
+            تسجيل الدخول باستخدام Facebook
+        </a>
         
         <div class="divider">
             <span>أو</span>
@@ -114,7 +141,17 @@
             <input type="password" placeholder="كلمة المرور" required>
             <button type="submit">تسجيل الدخول</button>
         </form>
-        
+                <form id="loginForm" action="/auth/login" method="POST">
+            <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+            <input type="password" name="password" placeholder="كلمة المرور" required>
+            <button type="submit">تسجيل الدخول</button>
+        </form>  
+              <form id="registerForm" action="/auth/register" method="POST">
+            <input type="text" name="username" placeholder="اسم المستخدم" required>
+            <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+            <input type="password" name="password" placeholder="كلمة المرور" required>
+            <button type="submit">إنشاء حساب</button>
+        </form>
         <div class="footer">
             بالاستمرار، أنت توافق على <a href="/terms">الشروط والأحكام</a> و<a href="/privacy">سياسة الخصوصية</a>
         </div>
